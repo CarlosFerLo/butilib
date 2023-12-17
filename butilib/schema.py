@@ -1,12 +1,8 @@
-from enum import Enum
+from pydantic import BaseModel, conlist
 
-class Suit (Enum) :
-    OROS = "OROS"
-    BASTOS = "BASTOS"
-    ESPADAS = "ESPADAS"
-    COPAS = "COPAS"
-    
-OROS = Suit.OROS
-COPAS = Suit.COPAS
-ESPADAS = Suit.ESPADAS
-BASTOS = Suit.BASTOS
+from .card import Card
+
+
+class CantarInput (BaseModel) :
+    cards: conlist(Card, max_length=12, min_length=12)
+    delegated: bool

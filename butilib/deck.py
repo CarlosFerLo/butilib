@@ -3,7 +3,7 @@ from typing import List, Tuple
 from random import shuffle
 
 from .card import Card
-from .schema import Suit
+from .suit import Suit
 
 class Deck (BaseModel) :
     cards: List[Card]
