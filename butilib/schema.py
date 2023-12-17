@@ -17,3 +17,6 @@ class CantarOutput (BaseModel) :
             raise ValueError("Not both suit and delegate fields can be set to non None/False values.")
         if self.suit is None and not self.delegate :
             raise ValueError("Must set one of the suit or delegate fields to non None/False values.")
+        
+class ContrarInput (BaseModel) :
+    pass

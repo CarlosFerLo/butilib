@@ -33,3 +33,34 @@ def test_card_can_be_compared_for_equality () :
     assert card1 != card3
     assert card1 != card4
     assert card1 != card5
+    
+def test_card_set_is_subclass_of_pydantic_base_model ():
+    assert issubclass(butilib.CardSet, pydantic.BaseModel)
+    
+def test_card_set_can_be_init_from_a_list_of_cards () :
+    card_list = [ butilib.Card(number=1, suit=butilib.OROS), butilib.Card(number=10, suit=butilib.OROS), butilib.Card(number=2, suit=butilib.ESPADAS) ]
+    card_set = butilib.CardSet(cards=card_list)
+    
+    assert isinstance(card_set, butilib.CardSet)
+    assert card_list == card_set.cards
+    
+def test_card_set_can_not_have_repeated_cards () :
+    card_list = [ butilib.Card(number=1, suit=butilib.OROS), butilib.Card(number=10, suit=butilib.OROS), butilib.Card(number=2, suit=butilib.ESPADAS), butilib.Card(number=10, suit=butilib.OROS) ]
+    pytest.raises(pydantic.ValidationError, butilib.CardSet, cards=card_list)
+    
+def test_card_set_add_method_adds_one_or_more_cards_to_the_set () :
+    card_list = [ butilib.Card(number=1, suit=butilib.OROS), butilib.Card(number=10, suit=butilib.OROS) ]
+    card_set = butilib.CardSet(cards=card_list)
+    
+    assert card_list == card_set.cards
+    
+    card_list.append(butilib.Card(number=2, suit=butilib.ESPADAS))
+    card_set.add(butilib.Card(number=2, suit=butilib.ESPADAS))
+    
+    assert card_list == card_set.cards
+    
+    card_extension = [ butilib.Card(number=10, suit=butilib.OROS), butilib.Card(number=10, suit=butilib.BASTOS) ]
+    card_list.extend(card_extension)
+    card_set.add(card_extension)
+    
+    assert card_list == card_set.cards

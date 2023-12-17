@@ -36,3 +36,6 @@ def test_cantar_output_has_optional_suit_field_and_delegate_field_that_can_not_b
     
     pytest.raises(pydantic.ValidationError, butilib.CantarOutput, suit=butilib.OROS, delegate=True)
     pytest.raises(pydantic.ValidationError, butilib.CantarOutput)
+    
+def test_contrar_input_is_a_subclass_of_pydantic_base_model () :
+    assert issubclass(butilib.ContrarInput, pydantic.BaseModel)
