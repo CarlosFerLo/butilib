@@ -64,3 +64,27 @@ def test_card_set_add_method_adds_one_or_more_cards_to_the_set () :
     card_set.add(card_extension)
     
     assert card_list == card_set.cards
+    
+def test_card_set_remove_method_deletes_one_or_more_cards_from_the_set () :
+    card_list = [ butilib.Card(number=1, suit=butilib.OROS), butilib.Card(number=10, suit=butilib.OROS), butilib.Card(number=2, suit=butilib.ESPADAS), butilib.Card(number=10, suit=butilib.BASTOS) ]
+    card_set = butilib.CardSet(cards=card_list)
+    
+    assert card_list == card_set.cards
+    
+    card_list.remove(butilib.Card(number=1, suit=butilib.OROS))
+    card_set.remove(butilib.Card(number=1, suit=butilib.OROS))
+    
+    assert card_list == card_set.cards
+    
+    card_list.remove(butilib.Card(number=10, suit=butilib.OROS))
+    card_list.remove(butilib.Card(number=2, suit=butilib.ESPADAS))
+    card_set.remove([ butilib.Card(number=10, suit=butilib.OROS), butilib.Card(number=2, suit=butilib.ESPADAS) ])
+    
+    assert card_list == card_set.cards
+    
+def test_card_set_remove_method_raises_value_error_if_try_to_remove_a_card_that_is_not_in_the_set () :
+    card_list = [ butilib.Card(number=1, suit=butilib.OROS), butilib.Card(number=10, suit=butilib.OROS), butilib.Card(number=2, suit=butilib.ESPADAS), butilib.Card(number=10, suit=butilib.BASTOS) ]
+    card_set = butilib.CardSet(cards=card_list)
+    
+    pytest.raises(ValueError, card_set.remove, butilib.Card(number=7, suit=butilib.COPAS))
+    pytest.raises(ValueError, card_set.remove, [ butilib.Card(number=7, suit=butilib.COPAS), butilib.Card(number=1, suit=butilib.OROS) ])

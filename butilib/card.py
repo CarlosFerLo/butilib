@@ -23,5 +23,16 @@ class CardSet (BaseModel) :
             if v.count(card) > 1 :
                 raise ValueError(f"The card: {card} appears more than one in the card set.")
         return v
-    
-    
+        
+    def add (self, elem: Card | List[Card]) -> None :
+        if isinstance(elem, list) :
+            self.cards.extend(elem)
+        else :
+            self.cards.append(elem)
+            
+    def remove (self, elem: Card | List[Card]) -> None :
+        if isinstance(elem, list) :
+            for e in elem :
+                self.cards.remove(e)
+        else :
+            self.cards.remove(elem)
