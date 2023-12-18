@@ -1,7 +1,8 @@
-from pydantic import BaseModel, conlist, model_validator
-from typing import Optional
-from .card import Card
+from pydantic import BaseModel, conlist, conint, model_validator, field_validator
+from typing import Optional, Tuple
+from .card import Card, CardSet
 from .suit import Suit
+from .contrada import Contrada, NORMAL, CONTRADA, RECONTRADA, SANT_VICENTADA
 
 class CantarInput (BaseModel) :
     cards: conlist(Card, max_length=12, min_length=12)
@@ -19,4 +20,26 @@ class CantarOutput (BaseModel) :
             raise ValueError("Must set one of the suit or delegate fields to non None/False values.")
         
 class ContrarInput (BaseModel) :
-    pass
+    cards: CardSet
+    player: conint(ge=0, le=3)
+    delegated: bool
+    triumph: Suit
+    score: Tuple[conint(ge=0, le=101), conint(ge=0, le=101)]
+    contrada: Contrada
+    
+    @field_validator("cards")
+    @classmethod
+    def validate_cards_field_contains_a_full_card_set (cls, v) :
+        if len(v) != 12 :
+            raise ValueError("The card set must be of length 12.")
+        return v
+    
+    @model_validator(mode="after")
+    def check_it_is_possible_to_be_in_that_situation (self) :
+        if self.contrada == SANT_VICENTADA :
+            raise ValueError("Once you have called Sant Vicenç you can no longer continue to contrar.")
+        if self.contrada == CONTRADA :
+            if self.player % 2 == 1 :
+                raise ValueError("This situation cannot be happening in a real game.")
+        elif self.player % 2 == 0 :
+            raise ValueError("This situation cannot be happening in a real game.")
