@@ -24,18 +24,29 @@ def test_cantar_input_has_cards_and_delegated_fields_and_expects_exactly_twelve_
 def test_cantar_output_is_a_subclass_of_pydantic_base_model () :
     assert issubclass(butilib.CantarOutput, pydantic.BaseModel)
     
-def test_cantar_output_has_optional_suit_field_and_delegate_field_that_can_not_be_both_set_to_the_same_state () :
+def test_cantar_output_has_optional_suit_field_a_butifarra_field_and_delegate_field_that_can_not_be_two_set_to_a_positive_state () :
     cantar_output = butilib.CantarOutput(suit=butilib.OROS)
     assert isinstance(cantar_output, butilib.CantarOutput)
     assert cantar_output.suit == butilib.OROS
     assert cantar_output.delegate == False
+    assert cantar_output.butifarra == False
     
     cantar_output = butilib.CantarOutput(delegate=True)
     assert isinstance(cantar_output, butilib.CantarOutput)
     assert cantar_output.suit == None
     assert cantar_output.delegate == True
+    assert cantar_output.butifarra == False
     
+    cantar_output = butilib.CantarOutput(butifarra=True)
+    assert isinstance(cantar_output, butilib.CantarOutput)
+    assert cantar_output.suit == None
+    assert cantar_output.delegate == False
+    assert cantar_output.butifarra == True
+    
+    pytest.raises(pydantic.ValidationError, butilib.CantarOutput, suit=butilib.OROS, delegate=True, butifarra=True)
     pytest.raises(pydantic.ValidationError, butilib.CantarOutput, suit=butilib.OROS, delegate=True)
+    pytest.raises(pydantic.ValidationError, butilib.CantarOutput, suit=butilib.OROS, butifarra=True)
+    pytest.raises(pydantic.ValidationError, butilib.CantarOutput, delegate=True, butifarra=True)
     pytest.raises(pydantic.ValidationError, butilib.CantarOutput)
     
 def test_contrar_input_is_a_subclass_of_pydantic_base_model () :

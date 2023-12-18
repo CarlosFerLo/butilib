@@ -18,13 +18,20 @@ class CantarInput (BaseModel) :
 class CantarOutput (BaseModel) :
     suit: Optional[Suit] = None
     delegate: bool = False
+    butifarra: bool = False
     
     @model_validator(mode="after")
     def check_only_one_option_was_set(self) :
+        if self.suit is not None and self.delegate and self.butifarra :
+            raise ValueError("Only one of suit, butifarra and delegate fields can be set to non None/False values.")
         if self.suit is not None and self.delegate :
             raise ValueError("Not both suit and delegate fields can be set to non None/False values.")
-        if self.suit is None and not self.delegate :
-            raise ValueError("Must set one of the suit or delegate fields to non None/False values.")
+        if self.suit is not None and self.butifarra :
+            raise ValueError("Not both suit and butifarra fields can be set to non None/False values.")
+        if self.butifarra and self.delegate :
+            raise ValueError("Not both delegate and butifarra fields can be set to non None/False values.")
+        if self.suit is None and not self.delegate and not self.butifarra :
+            raise ValueError("Must set one of the suit, delegate or butifarra fields to non None/False values.")
         
 class ContrarInput (BaseModel) :
     cards: CardSet
