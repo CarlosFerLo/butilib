@@ -1,9 +1,8 @@
 from pydantic import BaseModel
-from typing import NamedTuple
 
 from .suit import OROS, BASTOS, COPAS, ESPADAS, Suit
 
-class SuitDescription (NamedTuple) :
+class SuitDescription (BaseModel) :
     number: int
     points: int
 

@@ -2,7 +2,7 @@ from pydantic import BaseModel, conint, field_validator
 from typing import List
 
 from .suit import Suit
-from .descriptions import CardSetDescription
+from .descriptions import CardSetDescription, SuitDescription
 
 class Card (BaseModel) :
     number: conint(ge=1, le=12)
@@ -42,4 +42,15 @@ class CardSet (BaseModel) :
         return sum([ x.points() for x in self.cards ])
     
     def describe (self) -> CardSetDescription :
-        pass
+        desc = CardSetDescription(
+            oros=SuitDescription(number=0, points=0),
+            bastos=SuitDescription(number=0, points=0),
+            espadas=SuitDescription(number=0, points=0),
+            copas=SuitDescription(number=0, points=0),
+        )
+        
+        for c in self.cards :
+            desc[c.suit].number = desc[c.suit].number + 1
+            desc[c.suit].points = desc[c.suit].points + c.points()
+            
+        return desc

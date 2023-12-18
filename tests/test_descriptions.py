@@ -2,7 +2,10 @@ import pydantic
 import pytest
 import butilib
 
-def test_suit_description_is_a_named_tuple_with_atribute_names_number_and_points () :
+def test_suit_description_is_a_pydantic_base_model () :
+    assert issubclass(butilib.SuitDescription, pydantic.BaseModel)
+    
+def test_suit_description_has_number_and_points_atributes () :
     suit_description = butilib.SuitDescription(number=8, points=4)
     assert suit_description.number == 8
     assert suit_description.points == 4
