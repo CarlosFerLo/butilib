@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from .schema import CantarInput, CantarOutput
+from .schema import CantarInput, CantarOutput, ContrarInput, ContrarOutput
 
 class Model (BaseModel) :
     def cantar (self, input: CantarInput) -> CantarOutput :
@@ -14,4 +14,9 @@ class Model (BaseModel) :
     def _cantar (self, input: CantarInput) -> CantarOutput :
         raise NotImplementedError("You should implement _cantar method on a subclass.")
     
+    def contrar (self, input: ContrarInput) -> ContrarOutput :
+        output = self._contrar(input)
+        return output
     
+    def _contrar (self, input: ContrarInput) -> ContrarOutput :
+        raise NotImplementedError("You should implement _contrar method on a subclass.")

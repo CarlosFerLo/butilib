@@ -5,8 +5,15 @@ from .suit import Suit
 from .contrada import Contrada, NORMAL, CONTRADA, RECONTRADA, SANT_VICENTADA
 
 class CantarInput (BaseModel) :
-    cards: conlist(Card, max_length=12, min_length=12)
+    cards: CardSet
     delegated: bool
+    
+    @field_validator("cards")
+    @classmethod
+    def validate_cards_has_exactly_12_cards (cls, v) :
+        if len(v) != 12 :
+            raise ValueError("The card set must be of length 12.")
+        return v
     
 class CantarOutput (BaseModel) :
     suit: Optional[Suit] = None
