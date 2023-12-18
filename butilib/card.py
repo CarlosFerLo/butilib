@@ -54,3 +54,19 @@ class CardSet (BaseModel) :
             desc[c.suit].points = desc[c.suit].points + c.points()
             
         return desc
+    
+    def __len__ (self) -> int :
+        return len(self.cards)
+    
+    def __iter__(self) :
+        self._i = 0
+        return self
+    
+    def __next__(self):
+        try :
+            x = self.cards[self._i]
+            self._i += 1
+            return x
+        except IndexError:
+            raise StopIteration
+        

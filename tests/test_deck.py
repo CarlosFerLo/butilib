@@ -66,17 +66,17 @@ def test_deck_has_shuffle_method_that_randomly_shufles_the_cards_on_the_deck ():
                 has_changed = True
     assert has_changed
     
-def test_deck_has_deal_method_that_returns_four_lists_of_cards_and_only_runs_if_the_deck_is_full () :
+def test_deck_has_deal_method_that_returns_four_card_sets_and_only_runs_if_the_deck_is_full () :
     deck = butilib.Deck(cards=[])
     pytest.raises(ValueError, deck.deal)
     
     deck = butilib.Deck.new()
     s1, s2, s3, s4 = deck.deal()
     
-    assert isinstance(s1, list)
-    assert isinstance(s2, list)
-    assert isinstance(s3, list)
-    assert isinstance(s4, list)
+    assert isinstance(s1, butilib.CardSet)
+    assert isinstance(s2, butilib.CardSet)
+    assert isinstance(s3, butilib.CardSet)
+    assert isinstance(s4, butilib.CardSet)
     
     assert len(s1) == 12
     assert len(s2) == 12

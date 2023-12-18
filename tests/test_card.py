@@ -109,3 +109,19 @@ def test_card_set_describe_method_returns_the_correct_description_of_the_card_se
     assert cs_desc.bastos.points == 1
     assert cs_desc.copas.number == 0
     assert cs_desc.copas.points == 0
+    
+def test_card_set_has_the_len_dunder_method_implemented_and_returns_the_length_of_the_cards_attribute () :
+    card_list = [ butilib.Card(number=1, suit=butilib.OROS), butilib.Card(number=10, suit=butilib.OROS), butilib.Card(number=2, suit=butilib.ESPADAS), butilib.Card(number=10, suit=butilib.BASTOS) ]
+    card_set = butilib.CardSet(cards=card_list)
+    
+    assert len(card_list) == len(card_set)
+    
+def test_card_set_can_be_an_iterable_of_its_cards () :
+    card_list = [ butilib.Card(number=1, suit=butilib.OROS), butilib.Card(number=10, suit=butilib.OROS), butilib.Card(number=2, suit=butilib.ESPADAS), butilib.Card(number=10, suit=butilib.BASTOS) ]
+    card_set = butilib.CardSet(cards=card_list)
+    
+    for (i, c) in enumerate(card_set) :
+        assert c == card_list[i]
+        
+    new_list = [ x for x in card_set ]
+    assert new_list == card_list

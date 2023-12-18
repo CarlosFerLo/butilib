@@ -2,7 +2,7 @@ from pydantic import BaseModel, field_validator
 from typing import List, Tuple
 from random import shuffle
 
-from .card import Card
+from .card import Card, CardSet
 from .suit import Suit
 
 class Deck (BaseModel) :
@@ -35,14 +35,14 @@ class Deck (BaseModel) :
     def shuffle (self) -> None:
         shuffle(self.cards)
         
-    def deal (self) -> Tuple[List[Card], List[Card], List[Card], List[Card]] :
+    def deal (self) -> Tuple[CardSet, CardSet, CardSet, CardSet] :
         if len(self.cards) != 48 :
             raise ValueError("The deck must be full to use the default deal implementation.")
         
-        tup = tuple([[], [], [], []])
+        tup = tuple([CardSet(cards=[]), CardSet(cards=[]), CardSet(cards=[]), CardSet(cards=[])])
         for _ in range(3) :
             for i in range(4) :
                 cards = self.pop_some(4)
-                tup[i].extend(cards)
+                tup[i].add(cards)
         
         return tup
