@@ -94,3 +94,18 @@ def test_card_set_points_method_returns_the_sum_of_the_points_of_all_the_inner_c
     card_set = butilib.CardSet(cards=card_list)
     
     assert sum([ x.points() for x in card_list ]) == card_set.points()
+    
+def test_card_set_describe_method_returns_the_correct_description_of_the_card_set () :
+    card_list = [ butilib.Card(number=1, suit=butilib.OROS), butilib.Card(number=10, suit=butilib.OROS), butilib.Card(number=2, suit=butilib.ESPADAS), butilib.Card(number=10, suit=butilib.BASTOS) ]
+    card_set = butilib.CardSet(cards=card_list)
+    
+    cs_desc = card_set.describe()
+    
+    assert cs_desc.oros.number == 2
+    assert cs_desc.oros.points == 5
+    assert cs_desc.espadas.number == 1
+    assert cs_desc.espadas.points == 0
+    assert cs_desc.bastos.number == 1
+    assert cs_desc.bastos.points == 1
+    assert cs_desc.copas.number == 0
+    assert cs_desc.copas.points == 0
