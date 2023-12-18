@@ -43,3 +43,6 @@ class ContrarInput (BaseModel) :
                 raise ValueError("This situation cannot be happening in a real game.")
         elif self.player % 2 == 0 :
             raise ValueError("This situation cannot be happening in a real game.")
+        
+class ContrarOutput (BaseModel) :
+    contrar: bool

@@ -221,4 +221,10 @@ def test_contrar_input_checks_if_it_is_possible_to_be_in_that_situation () :
         contrada = butilib.RECONTRADA
         )
     
+def test_contrar_output_is_a_pydantic_base_model () :
+    assert issubclass(butilib.ContrarOutput, pydantic.BaseModel)
     
+def test_contrar_output_has_contrar_bool_attribute () :
+    contrar_output = butilib.ContrarOutput(contrar=False)
+    assert isinstance(contrar_output, butilib.ContrarOutput)
+    assert contrar_output.contrar == False
