@@ -88,3 +88,9 @@ def test_card_set_remove_method_raises_value_error_if_try_to_remove_a_card_that_
     
     pytest.raises(ValueError, card_set.remove, butilib.Card(number=7, suit=butilib.COPAS))
     pytest.raises(ValueError, card_set.remove, [ butilib.Card(number=7, suit=butilib.COPAS), butilib.Card(number=1, suit=butilib.OROS) ])
+    
+def test_card_set_points_method_returns_the_sum_of_the_points_of_all_the_inner_cards () :
+    card_list = [ butilib.Card(number=1, suit=butilib.OROS), butilib.Card(number=10, suit=butilib.OROS), butilib.Card(number=2, suit=butilib.ESPADAS), butilib.Card(number=10, suit=butilib.BASTOS) ]
+    card_set = butilib.CardSet(cards=card_list)
+    
+    assert sum([ x.points() for x in card_list ]) == card_set.points()

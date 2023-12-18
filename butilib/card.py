@@ -36,3 +36,6 @@ class CardSet (BaseModel) :
                 self.cards.remove(e)
         else :
             self.cards.remove(elem)
+            
+    def points (self) -> int :
+        return sum([ x.points() for x in self.cards ])
