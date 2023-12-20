@@ -27,4 +27,8 @@ def test_baza_has_only_one_of_triumph_or_butifarra_as_non_negative () :
     pytest.raises(pydantic.ValidationError, butilib.Baza, initial_player=0, cards=[butilib.Card(suit=butilib.OROS, number=1)])
     
 def test_baza_initial_player_is_a_int_between_0_and_3 () :
-    pass # TODO: Implement this test and finish baza class
+    pytest.raises(pydantic.ValidationError, butilib.Baza, triumph=butilib.OROS, initial_player=-1, cards=[butilib.Card(suit=butilib.OROS, number=1)])
+    pytest.raises(pydantic.ValidationError, butilib.Baza, triumph=butilib.OROS, initial_player=5, cards=[butilib.Card(suit=butilib.OROS, number=1)])
+    
+def test_baza_cards_has_no_repeated_elements () :
+    pytest.raises(pydantic.ValidationError, butilib.Baza, triumph=butilib.OROS, initial_player=0, cards=[butilib.Card(suit=butilib.OROS, number=1), butilib.Card(suit=butilib.OROS, number=1)])

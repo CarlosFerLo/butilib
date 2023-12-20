@@ -1,7 +1,7 @@
 from pydantic import BaseModel, conint, field_validator
 from typing import List
 
-from .suit import Suit
+from .suit import Suit, OROS, BASTOS, COPAS, ESPADAS
 from .descriptions import CardSetDescription, SuitDescription
 
 class Card (BaseModel) :
@@ -13,6 +13,12 @@ class Card (BaseModel) :
      
     def __eq__(self, __value: object) -> bool:
         return self.number == __value.number and self.suit == __value.suit
+    
+    def __str__(self) -> str:
+        return str(self.number) + { OROS: "O", BASTOS: "B", ESPADAS: "E", COPAS: "C" }[self.suit]
+    
+    def __hash__(self) -> int:
+        return hash(str(self))
     
 class CardSet (BaseModel) :
     cards: List[Card]
@@ -69,4 +75,3 @@ class CardSet (BaseModel) :
             return x
         except IndexError:
             raise StopIteration
-        

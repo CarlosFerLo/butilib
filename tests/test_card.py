@@ -125,3 +125,24 @@ def test_card_set_can_be_an_iterable_of_its_cards () :
         
     new_list = [ x for x in card_set ]
     assert new_list == card_list
+    
+def test_card_can_be_converted_to_a_string () :
+    card = butilib.Card(number=1, suit=butilib.OROS)
+    assert str(card) == "1O"
+    
+    card = butilib.Card(number=10, suit=butilib.BASTOS)
+    assert str(card) == "10B"
+    
+    card = butilib.Card(number=2, suit=butilib.ESPADAS)
+    assert str(card) == "2E"
+    
+    card = butilib.Card(number=12, suit=butilib.COPAS)
+    assert str(card) == "12C"
+    
+def test_card_is_hashable_and_can_be_added_to_a_set () :
+    card = butilib.Card(number=1, suit=butilib.OROS)
+    h = hash(card)
+    assert h is not None
+    
+    s = set([card])
+    assert len(s) == 1
