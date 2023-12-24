@@ -1,6 +1,7 @@
 from pydantic import BaseModel, conlist, conint, model_validator, field_validator
-from typing import Optional, Tuple
+from typing import Optional, Tuple, List
 from .card import Card, CardSet
+from .baza import History
 from .suit import Suit
 from .contrada import Contrada, NORMAL, CONTRADA, RECONTRADA, SANT_VICENTADA
 
@@ -62,4 +63,19 @@ class ContrarOutput (BaseModel) :
     contrar: bool
     
 class PlayInput (BaseModel) :
-    pass
+    history: History
+    card_set: CardSet
+    triumph: Optional[Suit] = None
+    butifarra: bool = False
+    player_number: conint(ge=0, le=3)
+    cards: List[Card]
+    contrada: Contrada
+    player_c: conint(ge=0, le=3)
+    delegated: bool
+    
+    @model_validator(mode="after")
+    def check_not_both_butifarra_and_triumph_attributes_are_Set_to_not_none_or_false_values (self) :
+        if self.triumph is None and self.butifarra == False :
+            raise ValueError("Must set one of triumph or butifarra fields to non None/False values.") 
+        if self.triumph is not None and self.butifarra == True :
+            raise ValueError("Only one of triumph or butifarra fields can be set to non None/False values.")

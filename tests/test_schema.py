@@ -242,3 +242,107 @@ def test_contrar_output_has_contrar_bool_attribute () :
     
 def test_play_input_is_a_pydantic_base_model () :
     assert issubclass(butilib.PlayInput, pydantic.BaseModel)
+
+def test_play_input_has_history_card_set_triumph_butifarra_player_number_cards_contrada_delegated_player_c () :
+    deck = butilib.Deck.new()
+    card_set, _, _, _ = deck.deal()
+    play_input = butilib.PlayInput(
+        history=butilib.History(bazas=[]),
+        card_set=card_set, triumph=butilib.OROS,
+        player_number=0, cards=[], contrada=butilib.NORMAL,
+        delegated=False, player_c=1 
+    )
+    
+    assert isinstance(play_input, butilib.PlayInput)
+    assert play_input.history == butilib.History(bazas=[])
+    assert play_input.card_set == card_set
+    assert play_input.triumph == butilib.OROS
+    assert play_input.butifarra == False
+    assert play_input.player_number == 0
+    assert play_input.cards == []
+    assert play_input.contrada == butilib.NORMAL
+    assert play_input.player_c == 1
+    assert play_input.delegated == False
+    
+    deck = butilib.Deck.new()
+    card_set, _, _, _ = deck.deal()
+    play_input = butilib.PlayInput(
+        history=butilib.History(bazas=[]),
+        card_set=card_set, butifarra=True,
+        player_number=0, cards=[], contrada=butilib.NORMAL,
+        delegated=False, player_c=1 
+    )
+    
+    assert isinstance(play_input, butilib.PlayInput)
+    assert play_input.history == butilib.History(bazas=[])
+    assert play_input.card_set == card_set
+    assert play_input.triumph == None
+    assert play_input.butifarra == True
+    assert play_input.player_number == 0
+    assert play_input.cards == []
+    assert play_input.contrada == butilib.NORMAL
+    assert play_input.player_c == 1
+    assert play_input.delegated == False
+    
+def test_play_input_player_number_is_between_0_and_3 () :
+    deck = butilib.Deck.new()
+    card_set, _, _, _ = deck.deal()
+    pytest.raises(pydantic.ValidationError, butilib.PlayInput,
+        history=butilib.History(bazas=[]),
+        card_set=card_set, butifarra=True,
+        player_number=-1, cards=[], contrada=butilib.NORMAL,
+        delegated=False, player_c=1 
+    )
+    pytest.raises(pydantic.ValidationError, butilib.PlayInput,
+        history=butilib.History(bazas=[]),
+        card_set=card_set, butifarra=True,
+        player_number=4, cards=[], contrada=butilib.NORMAL,
+        delegated=False, player_c=1
+    )
+    
+def test_play_input_player_c_is_between_0_and_3 () :
+    deck = butilib.Deck.new()
+    card_set, _, _, _ = deck.deal()
+    pytest.raises(pydantic.ValidationError, butilib.PlayInput,
+        history=butilib.History(bazas=[]),
+        card_set=card_set, butifarra=True,
+        player_number=1, cards=[], contrada=butilib.NORMAL,
+        delegated=False, player_c=-1
+    )
+    pytest.raises(pydantic.ValidationError, butilib.PlayInput,
+        history=butilib.History(bazas=[]),
+        card_set=card_set, butifarra=True,
+        player_number=1, cards=[], contrada=butilib.NORMAL,
+        delegated=False, player_c=4
+    )
+    
+def test_play_input_has_only_one_of_the_fields_butifarra_or_triumph_as_non_negative_values () :
+    deck = butilib.Deck.new()
+    card_set, _, _, _ = deck.deal()
+    pytest.raises(pydantic.ValidationError, butilib.PlayInput,
+        history=butilib.History(bazas=[]),
+        card_set=card_set, butifarra=True, triumph= butilib.OROS,
+        player_number=1, cards=[], contrada=butilib.NORMAL,
+        delegated=False, player_c=1
+    )
+    pytest.raises(pydantic.ValidationError, butilib.PlayInput,
+        history=butilib.History(bazas=[]),
+        card_set=card_set,
+        player_number=1, cards=[], contrada=butilib.NORMAL,
+        delegated=False, player_c=1
+    )
+
+
+def test_play_input_checks_that_the_history_is_consistent_with_the_rules () :
+    deck = butilib.Deck.new()
+    card_set = deck.pop_some(10)
+    
+    history = butilib.History(bazas=[
+        butilib.Baza(initial_player=0, cards=[ butilib.Card(number=i, suit=butilib.OROS) for i in [8, 10, 12, 9] ]),
+        butilib.Baza(initial_player=3, cards=[ butilib.Card(number=i, suit=butilib.ESPADAS) for i in [9, 2, 3, 5] ]),
+    ])
+    
+    #pytest.raises(pydantic.ValidationError, butilib.PlayInput,
+    #              history=history, card_set=card_set, 
+    #            )
+    
