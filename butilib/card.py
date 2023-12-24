@@ -1,5 +1,5 @@
 from pydantic import BaseModel, conint, field_validator
-from typing import List
+from typing import List, Optional
 
 from .suit import Suit, OROS, BASTOS, COPAS, ESPADAS
 from .descriptions import CardSetDescription, SuitDescription
@@ -20,6 +20,21 @@ class Card (BaseModel) :
     def __hash__(self) -> int:
         return hash(str(self))
     
+    def compare (self, other: "Card", t1: Suit, t2: Optional[Suit] = None) :
+        v1 = self.number + self.points() * 100
+        v2 = other.number + other.points() * 100
+        
+        if self.suit not in [t1, t2] and other.suit not in [t1, t2] :
+            return True
+        
+        if self.suit == t1 : v1 += 10000
+        elif t2 and self.suit == t2 : v1 += 1000
+        
+        if other.suit == t1 : v2 += 10000
+        elif t2 and other.suit == t2 : v2 += 1000
+        
+        return v1 >= v2
+
 class CardSet (BaseModel) :
     cards: List[Card]
     
@@ -75,3 +90,4 @@ class CardSet (BaseModel) :
             return x
         except IndexError:
             raise StopIteration
+        

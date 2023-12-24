@@ -146,3 +146,20 @@ def test_card_is_hashable_and_can_be_added_to_a_set () :
     
     s = set([card])
     assert len(s) == 1
+
+def test_has_compare_method_that_expects_another_card_and_primary_and_secondary_triumph () :
+    card1 = butilib.Card(number=1, suit=butilib.OROS)
+    card2 = butilib.Card(number=2, suit=butilib.OROS)
+    card3 = butilib.Card(number=10, suit=butilib.BASTOS)
+    
+    # compare two cards of the same suit
+    assert card1.compare(card2, butilib.BASTOS, butilib.OROS)
+    assert card2.compare(card2, butilib.ESPADAS)
+    
+    # compare cards of different suits depending of the triumphs
+    assert not card1.compare(card3, butilib.BASTOS, butilib.OROS)
+    assert not card1.compare(card3, butilib.BASTOS)
+    
+    assert card2.compare(card3, butilib.COPAS, butilib.ESPADAS)
+    assert not card1.compare(card3, butilib.ESPADAS, butilib.BASTOS)
+    

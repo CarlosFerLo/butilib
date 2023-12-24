@@ -60,3 +60,6 @@ class ContrarInput (BaseModel) :
         
 class ContrarOutput (BaseModel) :
     contrar: bool
+    
+class PlayInput (BaseModel) :
+    pass

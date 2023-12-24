@@ -239,3 +239,6 @@ def test_contrar_output_has_contrar_bool_attribute () :
     contrar_output = butilib.ContrarOutput(contrar=False)
     assert isinstance(contrar_output, butilib.ContrarOutput)
     assert contrar_output.contrar == False
+    
+def test_play_input_is_a_pydantic_base_model () :
+    assert issubclass(butilib.PlayInput, pydantic.BaseModel)

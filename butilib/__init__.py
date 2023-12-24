@@ -4,5 +4,5 @@ from .card import Card, CardSet
 from .deck import Deck
 from .model import Model
 from .baza import Baza
-from .schema import CantarInput, CantarOutput, ContrarInput, ContrarOutput
+from .schema import CantarInput, CantarOutput, ContrarInput, ContrarOutput, PlayInput
 from .descriptions import CardSetDescription, SuitDescription
