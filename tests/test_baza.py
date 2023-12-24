@@ -25,3 +25,39 @@ def test_baza_has_add_method_to_add_a_card_to_the_cards_attribute () :
     
     assert baza.cards == [butilib.Card(number=1, suit=butilib.OROS)]
     
+def test_history_is_a_pydantic_base_model () :
+    assert issubclass(butilib.History, pydantic.BaseModel)
+    
+def test_history_has_a_bazas_attribute_that_is_a_list_of_bazas () :
+    bazas = [
+        butilib.Baza(initial_player=0, cards=[
+            butilib.Card(number=1, suit=butilib.OROS),
+            butilib.Card(number=2, suit=butilib.OROS),
+            butilib.Card(number=3, suit=butilib.OROS),
+            butilib.Card(number=4, suit=butilib.OROS)
+        ])]
+    hystory = butilib.History(bazas=bazas)
+    
+    assert isinstance(hystory, butilib.History)
+    assert hystory.bazas == bazas
+    
+def test_history_bazas_has_a_number_of_bazas_between_0_to_12 () :
+    bazas = []
+    for s in butilib.Suit :
+        b = [
+            butilib.Baza(initial_player=0, cards=[ butilib.Card(number=i, suit=s) for i in [9, 1, 12, 11] ]),
+            butilib.Baza(initial_player=0, cards=[ butilib.Card(number=i, suit=s) for i in [10, 8, 7, 6] ]),
+            butilib.Baza(initial_player=0, cards=[ butilib.Card(number=i, suit=s) for i in [5, 4, 3, 2] ])
+        ]
+        bazas.extend(b)
+        
+    bazas.append(butilib.Baza(initial_player=0, cards=[ butilib.Card(number=i, suit=butilib.COPAS) for i in [9, 2, 3, 4] ]))
+    
+    assert len(bazas) == 13
+    pytest.raises(pydantic.ValidationError, butilib.History, bazas=bazas)
+    
+def test_history_checks_that_no_cards_are_repeated_on_the_bazas () :
+    pytest.raises(pydantic.ValidationError, butilib.History, bazas =[
+        butilib.Baza(initial_player=0, cards=[ butilib.Card(number=i, suit=butilib.OROS) for i in [1, 2, 3, 4] ]),
+        butilib.Baza(initial_player=0, cards=[ butilib.Card(number=i, suit=butilib.OROS) for i in [2, 5, 6, 7] ])
+    ])

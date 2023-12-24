@@ -1,5 +1,5 @@
-from pydantic import BaseModel, field_validator, model_validator, conint
-from typing import List, Optional
+from pydantic import BaseModel, field_validator, conint, conlist
+from typing import List
 
 from .suit import Suit
 from .card import Card
@@ -17,3 +17,18 @@ class Baza (BaseModel) :
     
     def add (self, card: Card) -> None :
         self.cards.append(card)
+        
+class History (BaseModel) :
+    bazas: conlist(Baza, max_length=12)
+    
+    @field_validator("bazas")
+    @classmethod
+    def validate_bazas_has_no_repeated_cards (cls, v) :
+        cards = set([])
+        for b in v :
+            cards.update(b.cards)
+            
+        if len(cards) != len(v) * 4 :
+            raise ValueError("There are repeated cards in the History.")
+        
+        return v
