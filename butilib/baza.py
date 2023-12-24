@@ -32,3 +32,9 @@ class History (BaseModel) :
             raise ValueError("There are repeated cards in the History.")
         
         return v
+    
+    def add (self, v: Baza | List[Baza]) -> None :
+        if isinstance(v, list) :
+            self.bazas.extend(v)
+        else : 
+            self.bazas.append(v)

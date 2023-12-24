@@ -61,3 +61,9 @@ def test_history_checks_that_no_cards_are_repeated_on_the_bazas () :
         butilib.Baza(initial_player=0, cards=[ butilib.Card(number=i, suit=butilib.OROS) for i in [1, 2, 3, 4] ]),
         butilib.Baza(initial_player=0, cards=[ butilib.Card(number=i, suit=butilib.OROS) for i in [2, 5, 6, 7] ])
     ])
+
+def test_history_has_add_method_to_add_a_baza_to_the_end_of_it () :
+    history = butilib.History(bazas=[])
+    history.add(butilib.Baza(initial_player=0, cards=[ butilib.Card(number=i, suit=butilib.OROS) for i in [1, 2, 3, 4] ]))
+    
+    assert history.bazas == [butilib.Baza(initial_player=0, cards=[ butilib.Card(number=i, suit=butilib.OROS) for i in [1, 2, 3, 4] ])]
