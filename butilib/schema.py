@@ -112,4 +112,10 @@ class PlayInput (BaseModel) :
         if prev_win is not None and len(self.cards) != (self.player_number - prev_win) % 4 :
             raise ValueError("The player_number attribute is not consistent with the cards and history attributes.")
             
+        return self
             
+    @model_validator(mode="after")
+    def check_number_of_cards_in_card_set_is_consistent_with_the_number_of_bazas_in_history (self) :
+        if len(self.card_set) != 12 - len(self.history) :
+            raise ValueError(f"The number of cards on the card set is not consistent with the number of bazas in the history. Number of cards: {len(self.card_set)}. Number of bazas: {len(self.history)}.")
+        return self

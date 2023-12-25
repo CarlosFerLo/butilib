@@ -106,3 +106,21 @@ def test_history_can_be_iterated () :
         
     assert bazas == [ b for b in history ]
     
+def test_len_of_history_equals_the_number_of_bazas_in_history () :
+    bazas = [
+        butilib.Baza(initial_player=0, cards=[
+            butilib.Card(number=1, suit=butilib.OROS),
+            butilib.Card(number=2, suit=butilib.OROS),
+            butilib.Card(number=3, suit=butilib.OROS),
+            butilib.Card(number=4, suit=butilib.OROS)
+        ]),
+        butilib.Baza(initial_player=0, cards=[
+            butilib.Card(number=1, suit=butilib.BASTOS),
+            butilib.Card(number=2, suit=butilib.BASTOS),
+            butilib.Card(number=3, suit=butilib.BASTOS),
+            butilib.Card(number=4, suit=butilib.BASTOS)
+        ])]
+    history = butilib.History(bazas=bazas)
+    
+    assert len(history) == 2
+    assert len(butilib.History(bazas=[])) == 0

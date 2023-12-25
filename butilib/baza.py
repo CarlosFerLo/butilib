@@ -68,3 +68,6 @@ class History (BaseModel) :
         
     def __eq__(self, __value: object) -> bool:
         return self.bazas == __value.bazas
+    
+    def __len__(self) -> int :
+        return len(self.bazas)
