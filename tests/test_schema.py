@@ -390,3 +390,18 @@ def test_play_input_checks_that_the_number_of_cards_in_the_card_set_is_consisten
                 contrada=butilib.NORMAL, delegated=False, player_c=1
             )
     
+def test_play_output_is_a_pydantic_base_model () :
+    assert issubclass(butilib.PlayOutput, pydantic.BaseModel)
+    
+def test_play_output_has_card_and_forced_attributes_with_False_as_default_value_for_forced () :
+    play_output = butilib.PlayOutput(card=butilib.Card(number=1, suit=butilib.OROS))
+    
+    assert isinstance(play_output, butilib.PlayOutput)
+    assert play_output.card == butilib.Card(number=1, suit=butilib.OROS)
+    assert play_output.forced == False
+    
+    play_output = butilib.PlayOutput(card=butilib.Card(number=1, suit=butilib.OROS), forced=True)
+    
+    assert isinstance(play_output, butilib.PlayOutput)
+    assert play_output.card == butilib.Card(number=1, suit=butilib.OROS)
+    assert play_output.forced == True

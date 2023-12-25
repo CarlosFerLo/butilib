@@ -119,3 +119,7 @@ class PlayInput (BaseModel) :
         if len(self.card_set) != 12 - len(self.history) :
             raise ValueError(f"The number of cards on the card set is not consistent with the number of bazas in the history. Number of cards: {len(self.card_set)}. Number of bazas: {len(self.history)}.")
         return self
+
+class PlayOutput (BaseModel) :
+    card: Card
+    forced: bool = False
