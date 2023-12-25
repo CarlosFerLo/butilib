@@ -335,14 +335,29 @@ def test_play_input_has_only_one_of_the_fields_butifarra_or_triumph_as_non_negat
 
 def test_play_input_checks_that_the_history_is_consistent_with_the_rules () :
     deck = butilib.Deck.new()
-    card_set = deck.pop_some(10)
+    card_set = butilib.CardSet(cards=deck.pop_some(10))
     
     history = butilib.History(bazas=[
         butilib.Baza(initial_player=0, cards=[ butilib.Card(number=i, suit=butilib.OROS) for i in [8, 10, 12, 9] ]),
         butilib.Baza(initial_player=3, cards=[ butilib.Card(number=i, suit=butilib.ESPADAS) for i in [9, 2, 3, 5] ]),
     ])
     
-    #pytest.raises(pydantic.ValidationError, butilib.PlayInput,
-    #              history=history, card_set=card_set, 
-    #            )
+    # The player_number and cards are not consistent as player 3 started
+    pytest.raises(pydantic.ValidationError, butilib.PlayInput,
+                  history=history, card_set=card_set, player_number=1, cards=[],
+                  triumph=butilib.OROS,
+                  contrada=butilib.NORMAL, delegated=False, player_c=1
+                )
+    
+    # The initial players of the bazas do not correspond to winners
+    history = butilib.History(bazas=[
+        butilib.Baza(initial_player=0, cards=[ butilib.Card(number=i, suit=butilib.OROS) for i in [8, 10, 12, 9] ]),
+        butilib.Baza(initial_player=2, cards=[ butilib.Card(number=i, suit=butilib.ESPADAS) for i in [9, 2, 3, 5] ]),
+    ])
+    
+    pytest.raises(pydantic.ValidationError, butilib.PlayInput,
+                  history=history, card_set=card_set, player_number=2, cards=[],
+                  triumph=butilib.OROS,
+                  contrada=butilib.NORMAL, delegated=False, player_c=1
+                )
     

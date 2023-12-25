@@ -25,6 +25,13 @@ def test_baza_has_add_method_to_add_a_card_to_the_cards_attribute () :
     
     assert baza.cards == [butilib.Card(number=1, suit=butilib.OROS)]
     
+def test_bazas_can_be_compared_for_equality () :
+    baza = butilib.Baza(triumph=butilib.OROS, initial_player=0, cards=[])
+    assert baza == butilib.Baza(triumph=butilib.OROS, initial_player=0, cards=[])
+    
+    baza.add(butilib.Card(number=1, suit=butilib.OROS))
+    assert not baza == butilib.Baza(triumph=butilib.OROS, initial_player=0, cards=[])
+    
 def test_history_is_a_pydantic_base_model () :
     assert issubclass(butilib.History, pydantic.BaseModel)
     
@@ -36,10 +43,20 @@ def test_history_has_a_bazas_attribute_that_is_a_list_of_bazas () :
             butilib.Card(number=3, suit=butilib.OROS),
             butilib.Card(number=4, suit=butilib.OROS)
         ])]
-    hystory = butilib.History(bazas=bazas)
+    history = butilib.History(bazas=bazas)
     
-    assert isinstance(hystory, butilib.History)
-    assert hystory.bazas == bazas
+    assert isinstance(history, butilib.History)
+    assert history.bazas == bazas
+    
+def test_history_bazas_are_complete_bazas () :
+    bazas = [
+        butilib.Baza(initial_player=0, cards=[
+            butilib.Card(number=1, suit=butilib.OROS),
+            butilib.Card(number=2, suit=butilib.OROS),
+            butilib.Card(number=3, suit=butilib.OROS)
+        ])
+    ]
+    pytest.raises(pydantic.ValidationError, butilib.History, bazas=bazas)
     
 def test_history_bazas_has_a_number_of_bazas_between_0_to_12 () :
     bazas = []
@@ -67,3 +84,25 @@ def test_history_has_add_method_to_add_a_baza_to_the_end_of_it () :
     history.add(butilib.Baza(initial_player=0, cards=[ butilib.Card(number=i, suit=butilib.OROS) for i in [1, 2, 3, 4] ]))
     
     assert history.bazas == [butilib.Baza(initial_player=0, cards=[ butilib.Card(number=i, suit=butilib.OROS) for i in [1, 2, 3, 4] ])]
+    
+def test_history_can_be_iterated () :
+    bazas = [
+        butilib.Baza(initial_player=0, cards=[
+            butilib.Card(number=1, suit=butilib.OROS),
+            butilib.Card(number=2, suit=butilib.OROS),
+            butilib.Card(number=3, suit=butilib.OROS),
+            butilib.Card(number=4, suit=butilib.OROS)
+        ]),
+        butilib.Baza(initial_player=0, cards=[
+            butilib.Card(number=1, suit=butilib.BASTOS),
+            butilib.Card(number=2, suit=butilib.BASTOS),
+            butilib.Card(number=3, suit=butilib.BASTOS),
+            butilib.Card(number=4, suit=butilib.BASTOS)
+        ])]
+    history = butilib.History(bazas=bazas)
+    
+    for i, b in enumerate(history) :
+        assert b == bazas[i]
+        
+    assert bazas == [ b for b in history ]
+    

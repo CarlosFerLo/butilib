@@ -83,7 +83,7 @@ class CardSet (BaseModel) :
         self._i = 0
         return self
     
-    def __next__(self):
+    def __next__(self) -> Card:
         try :
             x = self.cards[self._i]
             self._i += 1

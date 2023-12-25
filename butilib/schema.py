@@ -79,3 +79,37 @@ class PlayInput (BaseModel) :
             raise ValueError("Must set one of triumph or butifarra fields to non None/False values.") 
         if self.triumph is not None and self.butifarra == True :
             raise ValueError("Only one of triumph or butifarra fields can be set to non None/False values.")
+        
+        return self
+        
+    @model_validator(mode="after")
+    def check_history_is_consistent (self) :
+        prev_win = None
+        for b in self.history :
+            if prev_win is not None :
+                if prev_win != b.initial_player :
+                    raise ValueError("There is an inconsistency in the history.")
+            
+            if self.butifarra :
+                t1 = b.cards[0].suit
+                t2 = None
+            else :
+                t1 = self.triumph
+                t2 = b.cards[0].suit
+            
+            win_i = 0
+            if b.cards[1].compare(b.cards[0], t1, t2) :
+                win_i = 1
+
+            if b.cards[2].compare(b.cards[win_i], t1, t2) :
+                win_i = 2
+                
+            if b.cards[3].compare(b.cards[win_i], t1, t2) :
+                win_i = 3
+                
+            prev_win = (b.initial_player + win_i) % 4
+            
+        if prev_win is not None and len(self.cards) != (self.player_number - prev_win) % 4 :
+            raise ValueError("The player_number attribute is not consistent with the cards and history attributes.")
+            
+            

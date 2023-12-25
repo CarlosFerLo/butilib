@@ -18,8 +18,23 @@ class Baza (BaseModel) :
     def add (self, card: Card) -> None :
         self.cards.append(card)
         
+    def __eq__(self, __value: object) -> bool:
+        if self.initial_player != __value.initial_player :
+            return False
+        if self.cards != __value.cards :
+            return False
+        
+        return True
 class History (BaseModel) :
     bazas: conlist(Baza, max_length=12)
+    
+    @field_validator("bazas")
+    @classmethod
+    def validate_all_bazas_are_complete (cls, v) :
+        if any([ len(b.cards) < 4 for b in v ]) :
+            raise ValueError("THere are incomplete bazas.")
+        
+        return v
     
     @field_validator("bazas")
     @classmethod
@@ -38,3 +53,18 @@ class History (BaseModel) :
             self.bazas.extend(v)
         else : 
             self.bazas.append(v)
+            
+    def __iter__(self) :
+        self._i = 0
+        return self
+    
+    def __next__(self) -> Baza:
+        try :
+            x = self.bazas[self._i]
+            self._i += 1
+            return x
+        except IndexError:
+            raise StopIteration
+        
+    def __eq__(self, __value: object) -> bool:
+        return self.bazas == __value.bazas
