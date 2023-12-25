@@ -1,12 +1,11 @@
-from pydantic import BaseModel, field_validator, conint, conlist
+from pydantic import BaseModel, field_validator, Field
 from typing import List
 
-from .suit import Suit
 from .card import Card
 
 class Baza (BaseModel) :
-    initial_player: conint(ge=0, le=3)
-    cards: List[Card]
+    initial_player: int = Field(ge=0, le=3)
+    cards: List[Card] = Field(max_length=4)
  
     @field_validator("cards")
     @classmethod
@@ -26,7 +25,7 @@ class Baza (BaseModel) :
         
         return True
 class History (BaseModel) :
-    bazas: conlist(Baza, max_length=12)
+    bazas: List[Baza] = Field(max_length=12)
     
     @field_validator("bazas")
     @classmethod

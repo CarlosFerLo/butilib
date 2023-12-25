@@ -1,5 +1,6 @@
-from pydantic import BaseModel, conlist, conint, model_validator, field_validator
+from pydantic import BaseModel, Field, model_validator, field_validator
 from typing import Optional, Tuple, List
+from typing_extensions import Annotated
 from .card import Card, CardSet
 from .baza import History
 from .suit import Suit
@@ -36,10 +37,10 @@ class CantarOutput (BaseModel) :
         
 class ContrarInput (BaseModel) :
     cards: CardSet
-    player: conint(ge=0, le=3)
+    player: int = Field(ge=0, le=3)
     delegated: bool
     triumph: Suit
-    score: Tuple[conint(ge=0, le=101), conint(ge=0, le=101)]
+    score: Tuple[Annotated[int, Field(ge=0, le=101)], Annotated[int, Field(ge=0, le=101)]]
     contrada: Contrada
     
     @field_validator("cards")
@@ -67,10 +68,10 @@ class PlayInput (BaseModel) :
     card_set: CardSet
     triumph: Optional[Suit] = None
     butifarra: bool = False
-    player_number: conint(ge=0, le=3)
+    player_number: int = Field(ge=0, le=3)
     cards: List[Card]
     contrada: Contrada
-    player_c: conint(ge=0, le=3)
+    player_c: int = Field(ge=0, le=3)
     delegated: bool
     
     @model_validator(mode="after")

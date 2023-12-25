@@ -1,11 +1,11 @@
-from pydantic import BaseModel, conint, field_validator
+from pydantic import BaseModel, Field, field_validator
 from typing import List, Optional
 
 from .suit import Suit, OROS, BASTOS, COPAS, ESPADAS
 from .descriptions import CardSetDescription, SuitDescription
 
 class Card (BaseModel) :
-    number: conint(ge=1, le=12)
+    number: int = Field(ge=1, le=12)
     suit: Suit
     
     def points (self) -> int :
