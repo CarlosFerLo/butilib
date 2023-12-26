@@ -163,3 +163,18 @@ def test_has_compare_method_that_expects_another_card_and_primary_and_secondary_
     assert card2.compare(card3, butilib.COPAS, butilib.ESPADAS)
     assert not card1.compare(card3, butilib.ESPADAS, butilib.BASTOS)
     
+def test_card_set_get_method_accepts_optional_number_and_suit_parameters_and_returns_a_list_of_cards_that_match_provided () :
+    card_set = butilib.CardSet(cards=[
+        butilib.Card(number=1, suit=butilib.OROS),
+        butilib.Card(number=2, suit=butilib.OROS),
+        butilib.Card(number=1, suit=butilib.BASTOS),
+    ])
+    
+    assert set(card_set.get(number=1)) == set([butilib.Card(number=1, suit=butilib.OROS),butilib.Card(number=1, suit=butilib.BASTOS)])
+    assert set(card_set.get(suit=butilib.OROS)) == set([butilib.Card(number=1, suit=butilib.OROS), butilib.Card(number=2, suit=butilib.OROS)])
+    assert card_set.get(suit=butilib.OROS, number=1) == [butilib.Card(number=1, suit=butilib.OROS)]
+    assert card_set.get(suit=butilib.ESPADAS) == []
+    
+def test_card_set_get_method_raises_an_error_if_no_parameter_is_passed () :
+    card_set = butilib.CardSet(cards=[])
+    pytest.raises(ValueError, card_set.get)

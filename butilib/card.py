@@ -91,3 +91,14 @@ class CardSet (BaseModel) :
         except IndexError:
             raise StopIteration
         
+    def get (self, number: Optional[int] = None, suit: Optional[Suit] = None) -> List[Card] :
+        cards = self.cards
+        if number is None and suit is None :
+            raise ValueError("At leas one filter must be set to a non None value.")
+        if number is not None :
+            cards = [ c for c in cards if c.number == number ]
+        if suit is not None :
+            cards = [ c for c in cards if c.suit == suit ]
+            
+        return cards
+    
