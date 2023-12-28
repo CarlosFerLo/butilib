@@ -51,3 +51,48 @@ def test_model_has_contrar_method_that_expects_a_contrar_input_and_returns_a_con
     output = model.contrar(contrar_input)
     assert isinstance(output, butilib.ContrarOutput)
     assert output.contrar == False
+
+def test_model_has_play_method_that_expects_play_input_and_returns_play_output () :
+    class MyModel (butilib.Model) :
+        def _play (self, input: butilib.PlayInput) -> butilib.PlayOutput :
+            return butilib.PlayOutput(
+                card=input.card_set.cards[0]
+                )
+            
+    model = MyModel()
+    
+    card_set = butilib.CardSet(cards=[
+        butilib.Card(number=2, suit=butilib.OROS),
+        butilib.Card(number=1, suit=butilib.OROS),
+        butilib.Card(number=9, suit=butilib.OROS),
+        
+        butilib.Card(number=2, suit=butilib.COPAS),
+        butilib.Card(number=5, suit=butilib.COPAS),
+        
+        butilib.Card(number=4, suit=butilib.BASTOS),
+        butilib.Card(number=7, suit=butilib.BASTOS),
+        butilib.Card(number=12, suit=butilib.BASTOS),
+        butilib.Card(number=1, suit=butilib.BASTOS),
+        
+        butilib.Card(number=10, suit=butilib.ESPADAS),
+        butilib.Card(number=11, suit=butilib.ESPADAS),
+        butilib.Card(number=9, suit=butilib.ESPADAS),
+    ])
+    
+    play_input = butilib.PlayInput(
+        history=butilib.History(bazas=[]), butifarra=True, player_number=0,
+        cards=[], card_set=card_set, contrada=butilib.NORMAL,
+        player_c=0, delegated=False,
+    )
+    
+    play_output = model.play(play_input)
+    
+    assert play_output == butilib.PlayOutput(card=butilib.Card(number=2, suit=butilib.OROS))
+    
+    play_input = butilib.PlayInput(
+        history=butilib.History(bazas=[]), butifarra=True, player_number=0,
+        cards=[butilib.Card(number=4, suit=butilib.COPAS)], card_set=card_set, contrada=butilib.NORMAL,
+        player_c=0, delegated=False,
+    )
+    
+    assert play_output == butilib.PlayOutput(card=butilib.Card(number=5, suit=butilib.COPAS), forced=True)
