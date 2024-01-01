@@ -1,5 +1,7 @@
 from enum import Enum
 class Suit (Enum) :
+    """ The enum that contains the values of all the suits.
+    """
     OROS = "OROS"
     BASTOS = "BASTOS"
     ESPADAS = "ESPADAS"
