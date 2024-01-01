@@ -8,6 +8,15 @@ from .contrada import Contrada, NORMAL, CONTRADA, RECONTRADA, SANT_VICENTADA
 from .types import GameType
 
 class CantarInput (BaseModel) :
+    """ The input of the cantar method in a model.
+
+        Attributes:
+            cards (CardSet): The complete cardset you have.
+            delegated (bool): Wether the call wad delegated or not.
+            
+        Validators:
+            validate_cards_has_exactly_12_cards: check wether or not you have a complete card set.
+    """
     cards: CardSet
     delegated: bool
     
@@ -22,6 +31,16 @@ class CantarOutput (BaseModel) :
     suit: Optional[Suit] = None
     delegate: bool = False
     butifarra: bool = False
+    """ The output of the cantar function. It contains the selected suit, butifarra or if you delegate.
+    
+        Attributes:
+            suit (Optional[Suit]): The selected suit or None. Defaults to None.
+            delegate (bool): Wether you delegate the call or not. Defaults to False.
+            butifarra (bool): Wether you call butifarra or not. Defaults to False.
+            
+        Validators:
+            check_only_one_option_was_set: Check only one of the attributes are set to a non None/False values, but at least one. 
+    """
     
     @model_validator(mode="after")
     def check_only_one_option_was_set(self) :
@@ -37,6 +56,23 @@ class CantarOutput (BaseModel) :
             raise ValueError("Must set one of the suit, delegate or butifarra fields to non None/False values.")
         
 class ContrarInput (BaseModel) :
+    """ The input to the contrar function. It contains your cards, your player number, wether the triumph is delegated,
+        the selected triumph, current score, and the actual contrada level.
+        
+        Attributes:
+            cards (CardSet): Your cards (should be of length 12).
+            player (int): The player number of the one who call triumph (in relation to yours).
+            delegated (bool): Wether the triumph was delegated or not.
+            triumph (Suit): The triumph called.
+            score (Tuple[int, int]): The current score (your score is the first and theirs the second).
+            contrada (Contada): The current level of contrada.
+            
+        Validators:
+            validate_cards_field_contains_a_full_card_set: Check if the card set is full or not.
+            check_it_is_possible_to_be_in_that_situation: Check if the conrada level is possible or not.
+        TODO: add support for butifarra.
+    """
+    
     cards: CardSet
     player: int = Field(ge=0, le=3)
     delegated: bool
@@ -62,9 +98,34 @@ class ContrarInput (BaseModel) :
             raise ValueError("This situation cannot be happening in a real game.")
         
 class ContrarOutput (BaseModel) :
+    """ The output of the contrar function.
+
+        Attributes:
+            contrar (bool): Wether you increment the contrada level or not.
+    """
     contrar: bool
     
 class PlayInput (BaseModel) :
+    """ The input of the play function. It contains the game history, your cards, the triumph suit or butifarra, your player numner,
+        the played cards, the contrada level, the player thet contrated, if the call was delegated and the game type.    
+    
+        Attributes:
+            history (History): History of bazas in the game.
+            card_set (CardSet): Your card set.
+            triumph (Optional[Suit]): The triumph suit or None. Defaults to None.
+            butifarra (bool): Wether butifarra was called.
+            player_number (int): Your player number (between 0 and 3). 
+            cards (List[Card]): The cards played in the current baza.
+            contrada (Contrada): The contrada level.
+            player_c (int): the player that called triumph (between 0 and 3).
+            delegated (bool): wether the call was delegated.
+            game_type (GameType): whether the game variant is LIBREE or OBLIGADA.
+            
+        Validators:
+            check_not_both_butifarra_and_triumph_attributes_are_Set_to_not_none_or_false_values: Check that only one of the butifarra and triumph attributes are not set to non None/False values.
+            check_history_is_consistent: Check that the history is consistent within itself and the current baza.
+            check_number_of_cards_in_card_set_is_consistent_with_the_number_of_bazas_in_history: Check that you have the correct number of cards.
+    """
     history: History
     card_set: CardSet
     triumph: Optional[Suit] = None
@@ -124,5 +185,12 @@ class PlayInput (BaseModel) :
         return self
 
 class PlayOutput (BaseModel) :
+    """ The output of the play function. This contains the played card and wether it was forced or not.
+        A play call is considered forced if only one card is playable and the model is not called.
+            
+        Attributes:
+            card (Card): The card played. 
+            forced (bool): Wether the play was forced.
+    """
     card: Card
     forced: bool = False
