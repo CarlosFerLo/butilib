@@ -63,20 +63,21 @@ class ContrarInput (BaseModel) :
             cards (CardSet): Your cards (should be of length 12).
             player (int): The player number of the one who call triumph (in relation to yours).
             delegated (bool): Wether the triumph was delegated or not.
-            triumph (Suit): The triumph called.
+            triumph (Optional[Suit]): The triumph called. Defaults to None.
+            butifarra (bool): If butifarra is called. Defaults to False.
             score (Tuple[int, int]): The current score (your score is the first and theirs the second).
             contrada (Contada): The current level of contrada.
             
         Validators:
             validate_cards_field_contains_a_full_card_set: Check if the card set is full or not.
             check_it_is_possible_to_be_in_that_situation: Check if the conrada level is possible or not.
-        TODO: add support for butifarra.
     """
     
     cards: CardSet
     player: int = Field(ge=0, le=3)
     delegated: bool
-    triumph: Suit
+    triumph: Optional[Suit] = None
+    butifarra: bool = False
     score: Tuple[Annotated[int, Field(ge=0, le=101)], Annotated[int, Field(ge=0, le=101)]]
     contrada: Contrada
     
@@ -96,6 +97,14 @@ class ContrarInput (BaseModel) :
                 raise ValueError("This situation cannot be happening in a real game.")
         elif self.player % 2 == 0 :
             raise ValueError("This situation cannot be happening in a real game.")
+        return self
+        
+    @model_validator(mode="after")
+    def check_only_one_of_triumph_and_butifarra_attributes_is_not_none (self) :
+       if self.butifarra is False and self.triumph is None :
+           raise ValueError("Only one of suit or butifarra fields can be set to non None/False values.")
+       if self.butifarra is True and self.triumph is not None :
+            raise ValueError("Must set one of the suit or butifarra fields to non None/False values.")
         
 class ContrarOutput (BaseModel) :
     """ The output of the contrar function.
@@ -119,7 +128,7 @@ class PlayInput (BaseModel) :
             contrada (Contrada): The contrada level.
             player_c (int): the player that called triumph (between 0 and 3).
             delegated (bool): wether the call was delegated.
-            game_type (GameType): whether the game variant is LIBREE or OBLIGADA.
+            game_variant (GameType): whether the game variant is LIBREE or OBLIGADA.
             
         Validators:
             check_not_both_butifarra_and_triumph_attributes_are_Set_to_not_none_or_false_values: Check that only one of the butifarra and triumph attributes are not set to non None/False values.
