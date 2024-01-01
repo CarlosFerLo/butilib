@@ -52,12 +52,12 @@ def test_model_has_contrar_method_that_expects_a_contrar_input_and_returns_a_con
     assert isinstance(output, butilib.ContrarOutput)
     assert output.contrar == False
     
-def test_model_has_list_of_available_game_types_as_a_list_of_game_types_and_deffaults_to_both () :
+def test_model_has_list_of_available_game_variants_as_a_list_of_game_variants_and_deffaults_to_both () :
     model = butilib.Model()
-    assert model.game_types == [ butilib.LIBRE, butilib.OBLIGADA ]
+    assert model.game_variants == [ butilib.LIBRE, butilib.OBLIGADA ]
     
     class MyModel (butilib.Model) :
-        game_types: List[butilib.GameType] = [ butilib.LIBRE ]
+        game_types: List[butilib.GameVariant] = [ butilib.LIBRE ]
         
     my_model = MyModel()
     assert my_model.game_types == [ butilib.LIBRE ]
@@ -92,16 +92,16 @@ def test_model_has_play_method_that_expects_play_input_and_returns_play_output_c
     play_input = butilib.PlayInput(
         history=butilib.History(bazas=[]), butifarra=True, player_number=0,
         cards=[], card_set=card_set, contrada=butilib.NORMAL,
-        player_c=0, delegated=False, game_type=butilib.LIBRE
+        player_c=0, delegated=False, game_variant=butilib.LIBRE
     )
     
     play_output = model.play(play_input)
     
     assert play_output == butilib.PlayOutput(card=play_input.card_set.cards[0])
     
-def test_model_play_method_raises_value_error_if_model_does_not_allow_that_game_type () :
+def test_model_play_method_raises_value_error_if_model_does_not_allow_that_game_variant () :
     class MyModel (butilib.Model) :
-        game_types: List[butilib.GameType] = [butilib.OBLIGADA]
+        game_variants: List[butilib.GameVariant] = [butilib.OBLIGADA]
         def _play (self, input: butilib.PlayInput) -> butilib.PlayOutput :
             return butilib.PlayOutput(
                 card=input.card_set.cards[0]
@@ -130,7 +130,7 @@ def test_model_play_method_raises_value_error_if_model_does_not_allow_that_game_
     play_input = butilib.PlayInput(
         history=butilib.History(bazas=[]), butifarra=True, player_number=0,
         cards=[], card_set=card_set, contrada=butilib.NORMAL,
-        player_c=0, delegated=False, game_type=butilib.LIBRE
+        player_c=0, delegated=False, game_variant=butilib.LIBRE
     )
     
     pytest.raises(ValueError, model.play, input=play_input)
@@ -176,7 +176,7 @@ def test_model_play_method_may_call_call_libre_or_call_obligada_if_defined () :
     play_input = butilib.PlayInput(
         history=butilib.History(bazas=[]), butifarra=True, player_number=0,
         cards=[], card_set=card_set, contrada=butilib.NORMAL,
-        player_c=0, delegated=False, game_type=butilib.LIBRE
+        player_c=0, delegated=False, game_variant=butilib.LIBRE
     )
     
     play_output = model.play(play_input)
@@ -185,7 +185,7 @@ def test_model_play_method_may_call_call_libre_or_call_obligada_if_defined () :
     play_input = butilib.PlayInput(
         history=butilib.History(bazas=[]), butifarra=True, player_number=0,
         cards=[], card_set=card_set, contrada=butilib.NORMAL,
-        player_c=0, delegated=False, game_type=butilib.OBLIGADA
+        player_c=0, delegated=False, game_variant=butilib.OBLIGADA
     )
     
     play_output = model.play(play_input)
@@ -208,7 +208,7 @@ def test_model_play_method_may_call_call_libre_or_call_obligada_if_defined () :
     play_input = butilib.PlayInput(
         history=butilib.History(bazas=[]), butifarra=True, player_number=0,
         cards=[], card_set=card_set, contrada=butilib.NORMAL,
-        player_c=0, delegated=False, game_type=butilib.OBLIGADA
+        player_c=0, delegated=False, game_variant=butilib.OBLIGADA
     )
     
     play_output = model.play(play_input)

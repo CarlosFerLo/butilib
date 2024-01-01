@@ -1,5 +1,5 @@
 from enum import Enum
-class Suit (Enum) :
+class Suit (str, Enum) :
     """ The enum that contains the values of all the suits.
     """
     OROS = "OROS"

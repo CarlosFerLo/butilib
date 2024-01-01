@@ -2,8 +2,9 @@ import butilib
 import pytest
 from enum import Enum
 
-def test_butilib_has_suit_enum_with_values_oros_copas_espadas_bastos () :
+def test_butilib_has_suit_enum_str_with_values_oros_copas_espadas_bastos () :
     assert issubclass(butilib.Suit, Enum)
+    assert issubclass(butilib.Suit, str)
     assert butilib.Suit._member_names_ == ["OROS", "BASTOS", "ESPADAS", "COPAS"]
     
 def test_butilib_allows_for_importing_individual_suit_values () :

@@ -87,6 +87,8 @@ class Model (BaseModel) :
         Returns:
             PlayOutput: Output of the play function.
         """
+        print(input.game_variant)
+        print(self.game_variants)
         if input.game_variant not in self.game_variants :
             raise ValueError(f"This model does not support {input.game_variant}.")
         
