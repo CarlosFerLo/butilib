@@ -104,10 +104,43 @@ class Model (BaseModel) :
         return output
     
     def _play (self, input: PlayInput) -> PlayOutput :
+        """ Default function that gets called when play function is called and no specific play method available.
+
+        Args:
+            input (PlayInput): The input to the play function.
+
+        Raises:
+            NotImplementedError: This raises if you did not implement this method.
+
+        Returns:
+            PlayOutput: The output of the play function.
+        """
         raise NotImplementedError("You should implement _play method on a subclass.")
     
     def _play_libre (self, input: PlayInput) -> PlayOutput :
+        """ Default function that gets called when play function is called with input.game_type==butilib.LIBRE.
+
+        Args:
+            input (PlayInput): The input to the play function.
+
+        Raises:
+            NotImplementedError: This raises if you did not implement this method.
+
+        Returns:
+            PlayOutput: The output of the play function.
+        """
         raise NotImplementedError("You should implement _play_libre method on a subclass.")
     
     def _play_obligada (self, input: PlayInput) -> PlayOutput :
+        """ Default function that gets called when play function is called with input.game_type==butilib.OBLIGADA.
+
+        Args:
+            input (PlayInput): The input to the play function.
+
+        Raises:
+            NotImplementedError: This raises if you did not implement this method.
+
+        Returns:
+            PlayOutput: The output of the play function.
+        """
         raise NotImplementedError("You should implement _play_obligada method on a subclass.")
