@@ -243,14 +243,14 @@ def test_contrar_output_has_contrar_bool_attribute () :
 def test_play_input_is_a_pydantic_base_model () :
     assert issubclass(butilib.PlayInput, pydantic.BaseModel)
 
-def test_play_input_has_history_card_set_triumph_butifarra_player_number_cards_contrada_delegated_player_c () :
+def test_play_input_has_history_card_set_triumph_butifarra_player_number_cards_contrada_delegated_player_c_game_type () :
     deck = butilib.Deck.new()
     card_set, _, _, _ = deck.deal()
     play_input = butilib.PlayInput(
         history=butilib.History(bazas=[]),
         card_set=card_set, triumph=butilib.OROS,
         player_number=0, cards=[], contrada=butilib.NORMAL,
-        delegated=False, player_c=1 
+        delegated=False, player_c=1, game_type=butilib.LIBRE
     )
     
     assert isinstance(play_input, butilib.PlayInput)
@@ -263,6 +263,7 @@ def test_play_input_has_history_card_set_triumph_butifarra_player_number_cards_c
     assert play_input.contrada == butilib.NORMAL
     assert play_input.player_c == 1
     assert play_input.delegated == False
+    assert play_input.game_type == butilib.LIBRE
     
     deck = butilib.Deck.new()
     card_set, _, _, _ = deck.deal()
@@ -270,7 +271,7 @@ def test_play_input_has_history_card_set_triumph_butifarra_player_number_cards_c
         history=butilib.History(bazas=[]),
         card_set=card_set, butifarra=True,
         player_number=0, cards=[], contrada=butilib.NORMAL,
-        delegated=False, player_c=1 
+        delegated=False, player_c=1, game_type=butilib.OBLIGADA
     )
     
     assert isinstance(play_input, butilib.PlayInput)
@@ -283,6 +284,7 @@ def test_play_input_has_history_card_set_triumph_butifarra_player_number_cards_c
     assert play_input.contrada == butilib.NORMAL
     assert play_input.player_c == 1
     assert play_input.delegated == False
+    assert play_input.game_type == butilib.OBLIGADA
     
 def test_play_input_player_number_is_between_0_and_3 () :
     deck = butilib.Deck.new()
