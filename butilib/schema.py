@@ -5,7 +5,7 @@ from .card import Card, CardSet
 from .baza import History
 from .suit import Suit
 from .contrada import Contrada, NORMAL, CONTRADA, RECONTRADA, SANT_VICENTADA
-from .types import GameType
+from .variants import GameVariant
 
 class CantarInput (BaseModel) :
     """ The input of the cantar method in a model.
@@ -135,7 +135,7 @@ class PlayInput (BaseModel) :
     contrada: Contrada
     player_c: int = Field(ge=0, le=3)
     delegated: bool
-    game_type: GameType
+    game_variant: GameVariant
     
     @model_validator(mode="after")
     def check_not_both_butifarra_and_triumph_attributes_are_Set_to_not_none_or_false_values (self) :

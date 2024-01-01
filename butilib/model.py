@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from typing import List
 
-from .types import GameType, LIBRE, OBLIGADA
+from .variants import GameVariant, LIBRE, OBLIGADA
 from .schema import CantarInput, CantarOutput, ContrarInput, ContrarOutput, PlayInput, PlayOutput
 
 class Model (BaseModel) :
@@ -11,7 +11,7 @@ class Model (BaseModel) :
         Class Attributes:
             game_types (List[GameType]): The supported game types for this model. Defaults to [ butilib.LIBRE, butilib.OBLIGADA ]
     """
-    game_types: List[GameType] = [ LIBRE, OBLIGADA ]
+    game_variants: List[GameVariant] = [ LIBRE, OBLIGADA ]
         
     def cantar (self, input: CantarInput) -> CantarOutput :
         """ The function called when the model has to select a triumph suit.
@@ -87,10 +87,10 @@ class Model (BaseModel) :
         Returns:
             PlayOutput: Output of the play function.
         """
-        if input.game_type not in self.game_types :
-            raise ValueError(f"This model does not support {input.game_type}.")
+        if input.game_variant not in self.game_variants :
+            raise ValueError(f"This model does not support {input.game_variant}.")
         
-        if input.game_type == LIBRE :
+        if input.game_variant == LIBRE :
             try :
                 output = self._play_libre(input)
             except NotImplementedError :
