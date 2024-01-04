@@ -87,17 +87,24 @@ class Model (BaseModel) :
         Returns:
             PlayOutput: Output of the play function.
         """
-        print(input.game_variant)
-        print(self.game_variants)
+
         if input.game_variant not in self.game_variants :
             raise ValueError(f"This model does not support {input.game_variant}.")
+        
+        if len(input.cards) > 0 :
+            f_suit = input.cards[0].suit 
+            desc = input.card_set.describe()
+            
+            if desc[f_suit].number == 1 :
+                card = input.card_set.get(suit=f_suit)[0]
+                return PlayOutput(card=card, forced=True)
         
         if input.game_variant == LIBRE :
             try :
                 output = self._play_libre(input)
             except NotImplementedError :
                 output = self._play(input)
-        else :
+        else : # OBLIGADA 
             try :
                 output = self._play_obligada(input)
             except NotImplementedError :

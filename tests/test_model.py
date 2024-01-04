@@ -3,6 +3,7 @@ import pydantic
 from typing import List
 
 import butilib
+from butilib.schema import PlayInput, PlayOutput
 
 def test_model_class_inherits_from_pydantic_base_model () :
     assert issubclass(butilib.Model, pydantic.BaseModel)
@@ -214,5 +215,62 @@ def test_model_play_method_may_call_call_libre_or_call_obligada_if_defined () :
     play_output = model.play(play_input)
     assert play_output == butilib.PlayOutput(card=play_input.card_set.cards[0])
 
-def test_model_play_method_returns_forced_true_in_output_if_there_is_only_one_possible_card_to_play_in_obligada () :
-    pass
+def test_model_play_method_returns_forced_true_in_output_if_there_is_only_one_possible_card_to_play_if_you_have_just_one_card_of_the_forced_suit() :
+        
+    model = butilib.Model()
+    
+    card_set = butilib.CardSet(cards=[
+        butilib.Card(number=2, suit=butilib.OROS),
+        butilib.Card(number=1, suit=butilib.OROS),
+        butilib.Card(number=9, suit=butilib.OROS),
+        
+        butilib.Card(number=2, suit=butilib.COPAS),
+        
+        butilib.Card(number=5, suit=butilib.BASTOS),
+        butilib.Card(number=4, suit=butilib.BASTOS),
+        butilib.Card(number=7, suit=butilib.BASTOS),
+        butilib.Card(number=12, suit=butilib.BASTOS),
+        butilib.Card(number=1, suit=butilib.BASTOS),
+        
+        butilib.Card(number=10, suit=butilib.ESPADAS),
+        butilib.Card(number=11, suit=butilib.ESPADAS),
+        butilib.Card(number=9, suit=butilib.ESPADAS),
+    ])
+    
+    play_input = butilib.PlayInput(
+        history=butilib.History(bazas=[]), butifarra=True, player_number=0,
+        cards=[ butilib.Card(number=4, suit=butilib.COPAS) ], card_set=card_set, contrada=butilib.NORMAL,
+        player_c=0, delegated=False, game_variant=butilib.OBLIGADA
+    )
+    
+    output = model.play(play_input)
+    
+    assert output == butilib.PlayOutput(card=butilib.Card(number=2, suit=butilib.COPAS), forced=True)
+    
+    card_set = butilib.CardSet(cards=[
+        butilib.Card(number=2, suit=butilib.OROS),
+        butilib.Card(number=1, suit=butilib.OROS),
+        butilib.Card(number=9, suit=butilib.OROS),
+        
+        butilib.Card(number=7, suit=butilib.COPAS),
+        
+        butilib.Card(number=5, suit=butilib.BASTOS),
+        butilib.Card(number=4, suit=butilib.BASTOS),
+        butilib.Card(number=7, suit=butilib.BASTOS),
+        butilib.Card(number=12, suit=butilib.BASTOS),
+        butilib.Card(number=1, suit=butilib.BASTOS),
+        
+        butilib.Card(number=10, suit=butilib.ESPADAS),
+        butilib.Card(number=11, suit=butilib.ESPADAS),
+        butilib.Card(number=9, suit=butilib.ESPADAS),
+    ])
+    
+    play_input = butilib.PlayInput(
+        history=butilib.History(bazas=[]), butifarra=True, player_number=0,
+        cards=[ butilib.Card(number=4, suit=butilib.COPAS) ], card_set=card_set, contrada=butilib.NORMAL,
+        player_c=0, delegated=False, game_variant=butilib.OBLIGADA
+    )
+    
+    output = model.play(play_input)
+    
+    assert output == butilib.PlayOutput(card=butilib.Card(number=7, suit=butilib.COPAS), forced=True)
