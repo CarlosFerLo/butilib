@@ -373,7 +373,8 @@ def test_play_input_checks_that_the_history_is_consistent_with_the_rules () :
     pytest.raises(pydantic.ValidationError, butilib.PlayInput,
                   history=history, card_set=card_set, player_number=1, cards=[],
                   triumph=butilib.OROS,
-                  contrada=butilib.NORMAL, delegated=False, player_c=1
+                  contrada=butilib.NORMAL, delegated=False, player_c=1,
+                  game_variant=butilib.LIBRE
                 )
     
     # The initial players of the bazas do not correspond to winners
@@ -385,8 +386,21 @@ def test_play_input_checks_that_the_history_is_consistent_with_the_rules () :
     pytest.raises(pydantic.ValidationError, butilib.PlayInput,
                   history=history, card_set=card_set, player_number=2, cards=[],
                   triumph=butilib.OROS,
-                  contrada=butilib.NORMAL, delegated=False, player_c=1
+                  contrada=butilib.NORMAL, delegated=False, player_c=1,
+                  game_variant=butilib.LIBRE
                 )
+    
+    # The initial player of the first baza does not correspond with the one who called triumph
+    history = butilib.History(bazas=[
+        butilib.Baza(initial_player=0, cards=[ butilib.Card(number=i, suit=butilib.OROS) for i in [8, 10, 12, 9] ]),
+        butilib.Baza(initial_player=3, cards=[ butilib.Card(number=i, suit=butilib.ESPADAS) for i in [9, 2, 3, 5] ]),
+    ])
+    
+    pytest.raises(pydantic.ValidationError, butilib.PlayInput,
+                  history=history, card_set=card_set, player_number=3, cards=[],
+                  triumph=butilib.OROS,
+                  contrada=butilib.NORMAL, delegated=False, player_c=1, game_variant=butilib.OBLIGADA
+                  )
     
 def test_play_input_checks_that_the_number_of_cards_in_the_card_set_is_consistent_with_the_number_of_bazas_in_history () :
     deck = butilib.Deck.new()

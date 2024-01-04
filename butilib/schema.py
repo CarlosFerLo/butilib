@@ -162,6 +162,10 @@ class PlayInput (BaseModel) :
             if prev_win is not None :
                 if prev_win != b.initial_player :
                     raise ValueError("There is an inconsistency in the history.")
+            else :
+                called = self.player_c if not self.delegated else (self.player_c + 2) % 4
+                if (called + 1) % 4 != b.initial_player :
+                    raise ValueError("There is an inconsistency in the history.")
             
             if self.butifarra :
                 t1 = b.cards[0].suit
