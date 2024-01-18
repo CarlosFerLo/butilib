@@ -130,7 +130,8 @@ class Model (BaseModel) :
                                 lower = c
                                 
                         return PlayOutput(card=lower, forced=True)
-        
+                    elif len(w_cards) > 1 :
+                        p_cards = w_cards        
         
         if input.game_variant == LIBRE :
             try :
@@ -142,6 +143,10 @@ class Model (BaseModel) :
                 output = self._play_obligada(input)
             except NotImplementedError :
                 output = self._play(input)
+        
+        # TODO: Finish implementing this
+        # if output.card not in p_cards :
+        #     raise ValueError(f"Invalid card {output.card}, returned by the inner play implementation.")
         
         return output
     

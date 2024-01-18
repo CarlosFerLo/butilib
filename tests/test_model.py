@@ -3,6 +3,7 @@ import pydantic
 from typing import List
 
 import butilib
+from butilib.schema import PlayInput, PlayOutput
 
 def test_model_class_inherits_from_pydantic_base_model () :
     assert issubclass(butilib.Model, pydantic.BaseModel)
@@ -382,3 +383,99 @@ def test_model_play_method_does_play_forced_when_is_not_winning_in_obligada_and_
     )
     
     pytest.raises(NotImplementedError, model.play, play_input)
+    
+def test_model_play_method_returns_forced_true_and_the_triumph_card_if_you_have_no_cards_of_the_forced_suit_and_only_one_of_triumph () :
+    model = butilib.Model()
+    
+    card_set = butilib.CardSet(cards=[
+        butilib.Card(number=2, suit=butilib.OROS),
+        butilib.Card(number=1, suit=butilib.OROS),
+        butilib.Card(number=9, suit=butilib.OROS),
+        
+        butilib.Card(number=2, suit=butilib.COPAS),
+        
+        butilib.Card(number=5, suit=butilib.BASTOS),
+        butilib.Card(number=4, suit=butilib.BASTOS),
+        butilib.Card(number=7, suit=butilib.BASTOS),
+        butilib.Card(number=10, suit=butilib.BASTOS),
+        butilib.Card(number=1, suit=butilib.BASTOS),
+        
+        butilib.Card(number=10, suit=butilib.ESPADAS),
+        butilib.Card(number=11, suit=butilib.ESPADAS),
+        butilib.Card(number=9, suit=butilib.ESPADAS),
+    ])
+    
+    pass
+    
+def test_model_play_method_checks_returned_card_is_viable_else_raise_an_error () :
+    class MyModel (butilib.Model) :
+        card: butilib.Card
+        
+        def _play(self, input: PlayInput) -> PlayOutput:
+            return PlayOutput(card=self.card)
+    
+    card_set = butilib.CardSet(cards=[
+        butilib.Card(number=2, suit=butilib.OROS),
+        butilib.Card(number=1, suit=butilib.OROS),
+        butilib.Card(number=9, suit=butilib.OROS),
+        
+        butilib.Card(number=5, suit=butilib.BASTOS),
+        butilib.Card(number=4, suit=butilib.BASTOS),
+        butilib.Card(number=7, suit=butilib.BASTOS),
+        butilib.Card(number=10, suit=butilib.BASTOS),
+        butilib.Card(number=1, suit=butilib.BASTOS),
+        
+        butilib.Card(number=10, suit=butilib.ESPADAS),
+        butilib.Card(number=11, suit=butilib.ESPADAS),
+        butilib.Card(number=9, suit=butilib.ESPADAS),
+    ])
+    
+    model = MyModel(card=butilib.Card(number=2, suit=butilib.BASTOS))
+    
+    play_input = butilib.PlayInput(
+        history=butilib.History(bazas=[
+            butilib.Baza(initial_player=2, cards=[ butilib.Card(number=i, suit=butilib.COPAS) for i in [9, 3, 2, 4]])
+            ]), butifarra=True, player_number=0,
+        cards=[ butilib.Card(number=8, suit=butilib.BASTOS), butilib.Card(number=9, suit=butilib.BASTOS) ], card_set=card_set, contrada=butilib.NORMAL,
+        player_c=1, delegated=False, game_variant=butilib.LIBRE
+    )
+    
+    pytest.raises(ValueError, model.play, play_input)
+    
+    model = MyModel(card=butilib.Card(number=10, suit=butilib.ESPADAS))
+    
+    play_input = butilib.PlayInput(
+        history=butilib.History(bazas=[
+            butilib.Baza(initial_player=2, cards=[ butilib.Card(number=i, suit=butilib.COPAS) for i in [9, 3, 2, 4]])
+            ]), butifarra=True, player_number=0,
+        cards=[ butilib.Card(number=8, suit=butilib.BASTOS), butilib.Card(number=9, suit=butilib.BASTOS) ], card_set=card_set, contrada=butilib.NORMAL,
+        player_c=1, delegated=False, game_variant=butilib.LIBRE
+    )
+    
+    pytest.raises(ValueError, model.play, play_input)
+    
+    model = MyModel(card=butilib.Card(number=7, suit=butilib.BASTOS))
+    
+    play_input = butilib.PlayInput(
+        history=butilib.History(bazas=[
+            butilib.Baza(initial_player=2, cards=[ butilib.Card(number=i, suit=butilib.COPAS) for i in [9, 3, 2, 4]])
+            ]), butifarra=True, player_number=0,
+        cards=[ butilib.Card(number=8, suit=butilib.BASTOS), butilib.Card(number=9, suit=butilib.BASTOS) ], card_set=card_set, contrada=butilib.NORMAL,
+        player_c=1, delegated=False, game_variant=butilib.LIBRE
+    )
+    
+    output = model.play(play_input)
+    
+    assert output == butilib.PlayOutput(card=butilib.Card(number=7, suit=butilib.BASTOS))
+    
+    model = MyModel(card=butilib.Card(number=1, suit=butilib.BASTOS))
+    
+    play_input = butilib.PlayInput(
+        history=butilib.History(bazas=[
+            butilib.Baza(initial_player=2, cards=[ butilib.Card(number=i, suit=butilib.COPAS) for i in [9, 3, 2, 4]])
+            ]), butifarra=True, player_number=0,
+        cards=[ butilib.Card(number=3, suit=butilib.BASTOS), butilib.Card(number=8, suit=butilib.BASTOS) ], card_set=card_set, contrada=butilib.NORMAL,
+        player_c=1, delegated=False, game_variant=butilib.LIBRE
+    )
+    
+    pytest.raises(ValueError, model.play, play_input)
