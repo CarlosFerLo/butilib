@@ -3,7 +3,6 @@ import pydantic
 from typing import List
 
 import butilib
-from butilib.schema import PlayInput, PlayOutput
 
 def test_model_class_inherits_from_pydantic_base_model () :
     assert issubclass(butilib.Model, pydantic.BaseModel)
@@ -305,3 +304,40 @@ def test_model_play_method_returns_forced_true_if_there_is_only_one_possible_car
     output = model.play(play_input)
     
     assert output == butilib.PlayOutput(card=butilib.Card(number=1, suit=butilib.BASTOS), forced=True)
+    
+    play_input = butilib.PlayInput(
+        history=butilib.History(bazas=[]), butifarra=True, player_number=0,
+        cards=[ butilib.Card(number=8, suit=butilib.BASTOS) ], card_set=card_set, contrada=butilib.NORMAL,
+        player_c=0, delegated=False, game_variant=butilib.OBLIGADA
+    )
+    
+    pytest.raises(NotImplementedError, model.play, play_input)
+    
+def test_model_cantar_method_does_not_try_to_play_forced_while_companion_winning () :
+    model = butilib.Model()
+    
+    card_set = butilib.CardSet(cards=[
+        butilib.Card(number=2, suit=butilib.OROS),
+        butilib.Card(number=1, suit=butilib.OROS),
+        butilib.Card(number=9, suit=butilib.OROS),
+        
+        butilib.Card(number=2, suit=butilib.COPAS),
+        
+        butilib.Card(number=5, suit=butilib.BASTOS),
+        butilib.Card(number=4, suit=butilib.BASTOS),
+        butilib.Card(number=7, suit=butilib.BASTOS),
+        butilib.Card(number=10, suit=butilib.BASTOS),
+        butilib.Card(number=1, suit=butilib.BASTOS),
+        
+        butilib.Card(number=10, suit=butilib.ESPADAS),
+        butilib.Card(number=11, suit=butilib.ESPADAS),
+        butilib.Card(number=9, suit=butilib.ESPADAS),
+    ])
+    
+    play_input = butilib.PlayInput(
+        history=butilib.History(bazas=[]), butifarra=True, player_number=0,
+        cards=[ butilib.Card(number=12, suit=butilib.BASTOS), butilib.Card(number=2, suit=butilib.BASTOS) ], card_set=card_set, contrada=butilib.NORMAL,
+        player_c=1, delegated=False, game_variant=butilib.OBLIGADA
+    )
+
+    pytest.raises(NotImplementedError, model.play, play_input)
