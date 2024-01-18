@@ -274,3 +274,34 @@ def test_model_play_method_returns_forced_true_in_output_if_there_is_only_one_po
     output = model.play(play_input)
     
     assert output == butilib.PlayOutput(card=butilib.Card(number=7, suit=butilib.COPAS), forced=True)
+    
+def test_model_play_method_returns_forced_true_if_there_is_only_one_possible_card_to_play_you_have_more_than_one_of_f_suit_but_only_one_is_higher_and_the_enemy_team_is_winning () :
+    model = butilib.Model()
+    
+    card_set = butilib.CardSet(cards=[
+        butilib.Card(number=2, suit=butilib.OROS),
+        butilib.Card(number=1, suit=butilib.OROS),
+        butilib.Card(number=9, suit=butilib.OROS),
+        
+        butilib.Card(number=2, suit=butilib.COPAS),
+        
+        butilib.Card(number=5, suit=butilib.BASTOS),
+        butilib.Card(number=4, suit=butilib.BASTOS),
+        butilib.Card(number=7, suit=butilib.BASTOS),
+        butilib.Card(number=10, suit=butilib.BASTOS),
+        butilib.Card(number=1, suit=butilib.BASTOS),
+        
+        butilib.Card(number=10, suit=butilib.ESPADAS),
+        butilib.Card(number=11, suit=butilib.ESPADAS),
+        butilib.Card(number=9, suit=butilib.ESPADAS),
+    ])
+    
+    play_input = butilib.PlayInput(
+        history=butilib.History(bazas=[]), butifarra=True, player_number=0,
+        cards=[ butilib.Card(number=12, suit=butilib.BASTOS) ], card_set=card_set, contrada=butilib.NORMAL,
+        player_c=0, delegated=False, game_variant=butilib.OBLIGADA
+    )
+    
+    output = model.play(play_input)
+    
+    assert output == butilib.PlayOutput(card=butilib.Card(number=1, suit=butilib.BASTOS), forced=True)

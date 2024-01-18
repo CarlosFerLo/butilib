@@ -98,6 +98,29 @@ class Model (BaseModel) :
             if desc[f_suit].number == 1 :
                 card = input.card_set.get(suit=f_suit)[0]
                 return PlayOutput(card=card, forced=True)
+            elif desc[f_suit].number > 1 :
+                initial_player = input.initial_player()
+                win_i = 0
+                win_card = input.cards[0]
+                
+                if input.butifarra is True :
+                    t1 = f_suit
+                    t2 = None
+                else :
+                    t1 = input.triumph
+                    t2 = f_suit
+                
+                for i in range(1, len(input.cards)) :
+                    if input.cards[i].compare(win_card, t1, t2) :
+                        win_i = i
+                        win_card = input.cards[i]
+                
+                if (initial_player + win_i - input.player_number) % 2 != 0 :
+                    p_cards = input.card_set.get(suit=f_suit)
+                    p_cards = [ c for c in p_cards if c.compare(win_card, t1, t2) ]
+                    
+                    if len(p_cards) == 1 :
+                        return PlayOutput(card=p_cards[0], forced=True)
         
         if input.game_variant == LIBRE :
             try :
