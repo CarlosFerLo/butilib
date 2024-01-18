@@ -197,6 +197,45 @@ class PlayInput (BaseModel) :
             raise ValueError(f"The number of cards on the card set is not consistent with the number of bazas in the history. Number of cards: {len(self.card_set)}. Number of bazas: {len(self.history)}.")
         return self
 
+    def initial_player (self) -> int :
+        """ Returns the initial player of the baza.
+        
+            Returns:
+                int: The initial player of the baza.
+        """
+        if len(self.history) == 0 :
+            return (self.player_c + 1) % 4
+        else :
+            initial_player = (self.player_c + 1) % 4
+            for baza in self.history :
+                win_i = 0
+                win_c = baza.cards[0]
+                
+                forced_suit = baza.cards[0].suit
+                
+                if self.butifarra is True :
+                    t1 = baza.cards[0].suit
+                    t2 = None
+                else :
+                    t1 = self.triumph
+                    t2 = baza.cards[0].suit
+                    
+                if baza.cards[1].compare(win_c, t1, t2) :
+                    win_i = 1
+                    win_c = baza.cards[1]
+                
+                if baza.cards[2].compare(win_c, t1, t2) :
+                    win_i = 2
+                    win_c = baza.cards[2]
+                
+                if baza.cards[3].compare(win_c, t1, t2) :
+                    win_i = 3
+                    win_c = baza.cards[3]
+                
+                initial_player = (initial_player + win_i) % 4
+                
+            return initial_player
+
 class PlayOutput (BaseModel) :
     """ The output of the play function. This contains the played card and wether it was forced or not.
         A play call is considered forced if only one card is playable and the model is not called.

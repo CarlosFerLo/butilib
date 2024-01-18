@@ -446,3 +446,26 @@ def test_play_output_has_card_and_forced_attributes_with_False_as_default_value_
     assert isinstance(play_output, butilib.PlayOutput)
     assert play_output.card == butilib.Card(number=1, suit=butilib.OROS)
     assert play_output.forced == True
+    
+def test_play_input_has_initial_player_method_that_returns_the_number_of_the_player_that_started_current_baza () :
+    deck = butilib.Deck.new()
+    card_set, _, _, _ = deck.deal()
+    play_input = butilib.PlayInput(
+        history=butilib.History(bazas=[]),
+        card_set=card_set, butifarra=True,
+        player_number=0, cards=[], contrada=butilib.NORMAL,
+        delegated=False, player_c=1, game_variant=butilib.OBLIGADA
+    )
+    
+    assert play_input.initial_player() == 2
+    
+    card_set.remove(butilib.Card(number=8, suit=butilib.BASTOS))
+    
+    play_input = butilib.PlayInput(
+        history=butilib.History(bazas=[butilib.Baza(cards=[ butilib.Card(number=i, suit=butilib.BASTOS) for i in [ 8, 10, 12, 9 ] ], initial_player=2)]),
+        card_set=card_set, triumph=butilib.OROS,
+        player_number=2, cards=[butilib.Card(number=1, suit=butilib.OROS)], contrada=butilib.NORMAL,
+        delegated=False, player_c=1, game_variant=butilib.LIBRE
+    )
+    
+    assert play_input.initial_player() == 1
