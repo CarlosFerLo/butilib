@@ -117,10 +117,20 @@ class Model (BaseModel) :
                 
                 if (initial_player + win_i - input.player_number) % 2 != 0 :
                     p_cards = input.card_set.get(suit=f_suit)
-                    p_cards = [ c for c in p_cards if c.compare(win_card, t1, t2) ]
+                    w_cards = [ c for c in p_cards if c.compare(win_card, t1, t2) ]
                     
-                    if len(p_cards) == 1 :
-                        return PlayOutput(card=p_cards[0], forced=True)
+                    if len(w_cards) == 1 :
+                        return PlayOutput(card=w_cards[0], forced=True)
+                    elif len(w_cards) == 0 and input.game_variant is OBLIGADA:
+                        lower = None
+                        for c in p_cards :
+                            if lower is None :
+                                lower = c
+                            elif lower.compare(c, t1, t2) :
+                                lower = c
+                                
+                        return PlayOutput(card=lower, forced=True)
+        
         
         if input.game_variant == LIBRE :
             try :
