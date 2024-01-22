@@ -91,6 +91,9 @@ class Model (BaseModel) :
         if input.game_variant not in self.game_variants :
             raise ValueError(f"This model does not support {input.game_variant}.")
         
+        if len(input.card_set) == 1 :
+                return PlayOutput(card=input.card_set.cards[0], forced=True)
+        
         if len(input.cards) > 0 :
             f_suit = input.cards[0].suit 
             desc = input.card_set.describe()
@@ -98,23 +101,24 @@ class Model (BaseModel) :
             if desc[f_suit].number == 1 :
                 card = input.card_set.get(suit=f_suit)[0]
                 return PlayOutput(card=card, forced=True)
-            elif desc[f_suit].number > 1 :
-                initial_player = input.initial_player()
-                win_i = 0
-                win_card = input.cards[0]
-                
-                if input.butifarra is True :
-                    t1 = f_suit
-                    t2 = None
-                else :
-                    t1 = input.triumph
-                    t2 = f_suit
-                
-                for i in range(1, len(input.cards)) :
-                    if input.cards[i].compare(win_card, t1, t2) :
-                        win_i = i
-                        win_card = input.cards[i]
-                
+            
+            initial_player = input.initial_player()
+            win_i = 0
+            win_card = input.cards[0]
+            
+            if input.butifarra is True :
+                t1 = f_suit
+                t2 = None
+            else :
+                t1 = input.triumph
+                t2 = f_suit
+            
+            for i in range(1, len(input.cards)) :
+                if input.cards[i].compare(win_card, t1, t2) :
+                    win_i = i
+                    win_card = input.cards[i]
+            
+            if desc[f_suit].number > 1 :
                 if (initial_player + win_i - input.player_number) % 2 != 0 :
                     p_cards = input.card_set.get(suit=f_suit)
                     w_cards = [ c for c in p_cards if c.compare(win_card, t1, t2) ]
@@ -131,7 +135,21 @@ class Model (BaseModel) :
                                 
                         return PlayOutput(card=lower, forced=True)
                     elif len(w_cards) > 1 :
-                        p_cards = w_cards        
+                        p_cards = w_cards     
+                           
+            elif (initial_player + win_i - input.player_number) % 2 != 0 :
+                if input.butifarra is False:
+                    if desc[input.triumph].number == 1 :
+                        card = input.card_set.get(suit=input.triumph)[0]
+                        return PlayOutput(card=card, forced=True)
+                    elif desc[input.triumph].number > 1 :
+                        p_cards = input.card_set.get(suit=input.triumph)
+                        w_cards = [ c for c in p_cards if c.compare(win_card, t1, t2) ]
+                        
+                        if len(w_cards) == 1 :
+                            return PlayOutput(card=w_cards[0], forced=True)
+                        elif len(w_cards) > 1 :
+                            p_cards = w_cards
         
         if input.game_variant == LIBRE :
             try :
