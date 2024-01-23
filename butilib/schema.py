@@ -63,20 +63,21 @@ class ContrarInput (BaseModel) :
             cards (CardSet): Your cards (should be of length 12).
             player (int): The player number of the one who call triumph (in relation to yours).
             delegated (bool): Wether the triumph was delegated or not.
-            triumph (Suit): The triumph called.
+            triumph (Optional[Suit]): The triumph called. Defaults to None.
+            butifarra (bool): If butifarra is called. Defaults to False.
             score (Tuple[int, int]): The current score (your score is the first and theirs the second).
             contrada (Contada): The current level of contrada.
             
         Validators:
             validate_cards_field_contains_a_full_card_set: Check if the card set is full or not.
             check_it_is_possible_to_be_in_that_situation: Check if the conrada level is possible or not.
-        TODO: add support for butifarra.
     """
     
     cards: CardSet
     player: int = Field(ge=0, le=3)
     delegated: bool
-    triumph: Suit
+    triumph: Optional[Suit] = None
+    butifarra: bool = False
     score: Tuple[Annotated[int, Field(ge=0, le=101)], Annotated[int, Field(ge=0, le=101)]]
     contrada: Contrada
     
@@ -96,6 +97,14 @@ class ContrarInput (BaseModel) :
                 raise ValueError("This situation cannot be happening in a real game.")
         elif self.player % 2 == 0 :
             raise ValueError("This situation cannot be happening in a real game.")
+        return self
+        
+    @model_validator(mode="after")
+    def check_only_one_of_triumph_and_butifarra_attributes_is_not_none (self) :
+       if self.butifarra is False and self.triumph is None :
+           raise ValueError("Only one of suit or butifarra fields can be set to non None/False values.")
+       if self.butifarra is True and self.triumph is not None :
+            raise ValueError("Must set one of the suit or butifarra fields to non None/False values.")
         
 class ContrarOutput (BaseModel) :
     """ The output of the contrar function.
@@ -119,7 +128,7 @@ class PlayInput (BaseModel) :
             contrada (Contrada): The contrada level.
             player_c (int): the player that called triumph (between 0 and 3).
             delegated (bool): wether the call was delegated.
-            game_type (GameType): whether the game variant is LIBREE or OBLIGADA.
+            game_variant (GameType): whether the game variant is LIBREE or OBLIGADA.
             
         Validators:
             check_not_both_butifarra_and_triumph_attributes_are_Set_to_not_none_or_false_values: Check that only one of the butifarra and triumph attributes are not set to non None/False values.
@@ -153,6 +162,10 @@ class PlayInput (BaseModel) :
             if prev_win is not None :
                 if prev_win != b.initial_player :
                     raise ValueError("There is an inconsistency in the history.")
+            else :
+                called = self.player_c if not self.delegated else (self.player_c + 2) % 4
+                if (called + 1) % 4 != b.initial_player :
+                    raise ValueError("There is an inconsistency in the history.")
             
             if self.butifarra :
                 t1 = b.cards[0].suit
@@ -183,6 +196,45 @@ class PlayInput (BaseModel) :
         if len(self.card_set) != 12 - len(self.history) :
             raise ValueError(f"The number of cards on the card set is not consistent with the number of bazas in the history. Number of cards: {len(self.card_set)}. Number of bazas: {len(self.history)}.")
         return self
+
+    def initial_player (self) -> int :
+        """ Returns the initial player of the baza.
+        
+            Returns:
+                int: The initial player of the baza.
+        """
+        if len(self.history) == 0 :
+            return (self.player_c + 1) % 4
+        else :
+            initial_player = (self.player_c + 1) % 4
+            for baza in self.history :
+                win_i = 0
+                win_c = baza.cards[0]
+                
+                forced_suit = baza.cards[0].suit
+                
+                if self.butifarra is True :
+                    t1 = baza.cards[0].suit
+                    t2 = None
+                else :
+                    t1 = self.triumph
+                    t2 = baza.cards[0].suit
+                    
+                if baza.cards[1].compare(win_c, t1, t2) :
+                    win_i = 1
+                    win_c = baza.cards[1]
+                
+                if baza.cards[2].compare(win_c, t1, t2) :
+                    win_i = 2
+                    win_c = baza.cards[2]
+                
+                if baza.cards[3].compare(win_c, t1, t2) :
+                    win_i = 3
+                    win_c = baza.cards[3]
+                
+                initial_player = (initial_player + win_i) % 4
+                
+            return initial_player
 
 class PlayOutput (BaseModel) :
     """ The output of the play function. This contains the played card and wether it was forced or not.

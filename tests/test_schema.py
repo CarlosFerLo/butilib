@@ -52,7 +52,7 @@ def test_cantar_output_has_optional_suit_field_a_butifarra_field_and_delegate_fi
 def test_contrar_input_is_a_subclass_of_pydantic_base_model () :
     assert issubclass(butilib.ContrarInput, pydantic.BaseModel)
 
-def test_contrar_input_has_full_card_set_player_delegated_triumph_score_contrada_attributes () :
+def test_contrar_input_has_full_card_set_player_delegated_triumph_butifarra_score_contrada_attributes () :
     deck = butilib.Deck.new()
     card_set, _, _, _ = deck.deal()
     
@@ -68,10 +68,29 @@ def test_contrar_input_has_full_card_set_player_delegated_triumph_score_contrada
     assert isinstance(contrar_input, butilib.ContrarInput)
     assert card_set.cards == contrar_input.cards.cards
     assert contrar_input.player == 1
-    assert contrar_input.delegated == False
+    assert contrar_input.delegated is False
     assert contrar_input.triumph == butilib.OROS
     assert contrar_input.score == (12, 0)
     assert contrar_input.contrada == butilib.NORMAL
+    assert contrar_input.butifarra is False
+     
+    contrar_input = butilib.ContrarInput(
+        cards=card_set,
+        player=1,
+        delegated=False,
+        butifarra=True,
+        score = (12, 0),
+        contrada = butilib.NORMAL
+    )
+    
+    assert isinstance(contrar_input, butilib.ContrarInput)
+    assert card_set.cards == contrar_input.cards.cards
+    assert contrar_input.player == 1
+    assert contrar_input.delegated is False
+    assert contrar_input.triumph is None
+    assert contrar_input.score == (12, 0)
+    assert contrar_input.contrada == butilib.NORMAL
+    assert contrar_input.butifarra is True
     
 def test_contrar_input_cards_property_has_exactly_12_cards () :
     deck = butilib.Deck.new()
@@ -232,6 +251,12 @@ def test_contrar_input_checks_if_it_is_possible_to_be_in_that_situation () :
         contrada = butilib.RECONTRADA
         )
     
+def test_contrar_output_only_one_of_triumph_or_butifarra_attributes_as_not_none_or_false ():
+    deck = butilib.Deck.new()
+    cards, _, _, _ = deck.deal()
+    pytest.raises(pydantic.ValidationError, butilib.ContrarInput, cards=cards, player=0, delegated=False, score=(1, 10), contrada=butilib.CONTRADA)
+    pytest.raises(pydantic.ValidationError, butilib.ContrarInput, cards=cards, player=0, delegated=False, score=(1, 10), contrada=butilib.CONTRADA, triumph=butilib.OROS, butifarra=True)
+    
 def test_contrar_output_is_a_pydantic_base_model () :
     assert issubclass(butilib.ContrarOutput, pydantic.BaseModel)
     
@@ -348,7 +373,8 @@ def test_play_input_checks_that_the_history_is_consistent_with_the_rules () :
     pytest.raises(pydantic.ValidationError, butilib.PlayInput,
                   history=history, card_set=card_set, player_number=1, cards=[],
                   triumph=butilib.OROS,
-                  contrada=butilib.NORMAL, delegated=False, player_c=1
+                  contrada=butilib.NORMAL, delegated=False, player_c=1,
+                  game_variant=butilib.LIBRE
                 )
     
     # The initial players of the bazas do not correspond to winners
@@ -360,8 +386,21 @@ def test_play_input_checks_that_the_history_is_consistent_with_the_rules () :
     pytest.raises(pydantic.ValidationError, butilib.PlayInput,
                   history=history, card_set=card_set, player_number=2, cards=[],
                   triumph=butilib.OROS,
-                  contrada=butilib.NORMAL, delegated=False, player_c=1
+                  contrada=butilib.NORMAL, delegated=False, player_c=1,
+                  game_variant=butilib.LIBRE
                 )
+    
+    # The initial player of the first baza does not correspond with the one who called triumph
+    history = butilib.History(bazas=[
+        butilib.Baza(initial_player=0, cards=[ butilib.Card(number=i, suit=butilib.OROS) for i in [8, 10, 12, 9] ]),
+        butilib.Baza(initial_player=3, cards=[ butilib.Card(number=i, suit=butilib.ESPADAS) for i in [9, 2, 3, 5] ]),
+    ])
+    
+    pytest.raises(pydantic.ValidationError, butilib.PlayInput,
+                  history=history, card_set=card_set, player_number=3, cards=[],
+                  triumph=butilib.OROS,
+                  contrada=butilib.NORMAL, delegated=False, player_c=1, game_variant=butilib.OBLIGADA
+                  )
     
 def test_play_input_checks_that_the_number_of_cards_in_the_card_set_is_consistent_with_the_number_of_bazas_in_history () :
     deck = butilib.Deck.new()
@@ -407,3 +446,26 @@ def test_play_output_has_card_and_forced_attributes_with_False_as_default_value_
     assert isinstance(play_output, butilib.PlayOutput)
     assert play_output.card == butilib.Card(number=1, suit=butilib.OROS)
     assert play_output.forced == True
+    
+def test_play_input_has_initial_player_method_that_returns_the_number_of_the_player_that_started_current_baza () :
+    deck = butilib.Deck.new()
+    card_set, _, _, _ = deck.deal()
+    play_input = butilib.PlayInput(
+        history=butilib.History(bazas=[]),
+        card_set=card_set, butifarra=True,
+        player_number=0, cards=[], contrada=butilib.NORMAL,
+        delegated=False, player_c=1, game_variant=butilib.OBLIGADA
+    )
+    
+    assert play_input.initial_player() == 2
+    
+    card_set.remove(butilib.Card(number=8, suit=butilib.BASTOS))
+    
+    play_input = butilib.PlayInput(
+        history=butilib.History(bazas=[butilib.Baza(cards=[ butilib.Card(number=i, suit=butilib.BASTOS) for i in [ 8, 10, 12, 9 ] ], initial_player=2)]),
+        card_set=card_set, triumph=butilib.OROS,
+        player_number=2, cards=[butilib.Card(number=1, suit=butilib.OROS)], contrada=butilib.NORMAL,
+        delegated=False, player_c=1, game_variant=butilib.LIBRE
+    )
+    
+    assert play_input.initial_player() == 1
