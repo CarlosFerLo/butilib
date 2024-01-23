@@ -119,23 +119,24 @@ class Model (BaseModel) :
                     win_card = input.cards[i]
             
             if desc[f_suit].number > 1 :
+                p_cards = input.card_set.get(suit=f_suit)
                 if (initial_player + win_i - input.player_number) % 2 != 0 :
-                    p_cards = input.card_set.get(suit=f_suit)
                     w_cards = [ c for c in p_cards if c.compare(win_card, t1, t2) ]
                     
                     if len(w_cards) == 1 :
                         return PlayOutput(card=w_cards[0], forced=True)
-                    elif len(w_cards) == 0 and input.game_variant is OBLIGADA:
-                        lower = None
-                        for c in p_cards :
-                            if lower is None :
-                                lower = c
-                            elif lower.compare(c, t1, t2) :
-                                lower = c
+                    elif len(w_cards) == 0 :
+                        if input.game_variant is OBLIGADA:
+                            lower = None
+                            for c in p_cards :
+                                if lower is None :
+                                    lower = c
+                                elif lower.compare(c, t1, t2) :
+                                    lower = c
                                 
-                        return PlayOutput(card=lower, forced=True)
+                            return PlayOutput(card=lower, forced=True)
                     elif len(w_cards) > 1 :
-                        p_cards = w_cards     
+                        p_cards = w_cards
                            
             elif (initial_player + win_i - input.player_number) % 2 != 0 :
                 if input.butifarra is False:
@@ -150,6 +151,10 @@ class Model (BaseModel) :
                             return PlayOutput(card=w_cards[0], forced=True)
                         elif len(w_cards) > 1 :
                             p_cards = w_cards
+            else :        
+                p_cards = input.card_set.cards
+        else :
+            p_cards = input.card_set.cards
         
         if input.game_variant == LIBRE :
             try :
@@ -161,10 +166,9 @@ class Model (BaseModel) :
                 output = self._play_obligada(input)
             except NotImplementedError :
                 output = self._play(input)
-        
-        # TODO: Finish implementing this
-        # if output.card not in p_cards :
-        #     raise ValueError(f"Invalid card {output.card}, returned by the inner play implementation.")
+
+        if output.card not in p_cards :
+            raise ValueError(f"Invalid card {output.card}, returned by the inner play implementation.")
         
         return output
     
