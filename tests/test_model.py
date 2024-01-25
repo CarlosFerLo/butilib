@@ -4,6 +4,7 @@ from typing import List
 
 import butilib
 from butilib.schema import PlayInput, PlayOutput
+from butilib.testing import TestModel
 
 def test_model_class_inherits_from_pydantic_base_model () :
     assert issubclass(butilib.Model, pydantic.BaseModel)
@@ -533,12 +534,6 @@ def test_model_play_method_returns_forced_true_and_the_last_card_if_only_one_car
     
 
 def test_model_play_method_checks_returned_card_is_viable_else_raise_an_error () :
-    class MyModel (butilib.Model) :
-        card: butilib.Card
-        
-        def _play(self, input: PlayInput) -> PlayOutput:
-            return PlayOutput(card=self.card)
-    
     card_set = butilib.CardSet(cards=[
         butilib.Card(number=2, suit=butilib.OROS),
         butilib.Card(number=1, suit=butilib.OROS),
@@ -556,7 +551,7 @@ def test_model_play_method_checks_returned_card_is_viable_else_raise_an_error ()
     ])
     
     # Test the method fails if a card not on card_set is returned
-    model = MyModel(card=butilib.Card(number=2, suit=butilib.BASTOS))
+    model = TestModel(card_list=[butilib.Card(number=2, suit=butilib.BASTOS)])
     
     play_input = butilib.PlayInput(
         history=butilib.History(bazas=[
@@ -569,7 +564,7 @@ def test_model_play_method_checks_returned_card_is_viable_else_raise_an_error ()
     pytest.raises(ValueError, model.play, play_input)
     
     # Test the method fails if a card of another suit is returned when you have cards of the forced suit
-    model = MyModel(card=butilib.Card(number=10, suit=butilib.ESPADAS))
+    model = TestModel(card_list=[butilib.Card(number=10, suit=butilib.ESPADAS)])
     
     play_input = butilib.PlayInput(
         history=butilib.History(bazas=[
@@ -582,7 +577,7 @@ def test_model_play_method_checks_returned_card_is_viable_else_raise_an_error ()
     pytest.raises(ValueError, model.play, play_input)
     
     # Test that the method does not fail if you return a valid card
-    model = MyModel(card=butilib.Card(number=7, suit=butilib.BASTOS))
+    model = TestModel(card_list=[butilib.Card(number=7, suit=butilib.BASTOS)])
     
     play_input = butilib.PlayInput(
         history=butilib.History(bazas=[
@@ -597,7 +592,7 @@ def test_model_play_method_checks_returned_card_is_viable_else_raise_an_error ()
     assert output == butilib.PlayOutput(card=butilib.Card(number=7, suit=butilib.BASTOS))
     
     # Test the method fails if you do not superate the previous card and you should
-    model = MyModel(card=butilib.Card(number=4, suit=butilib.BASTOS))
+    model = TestModel(card_list=[butilib.Card(number=4, suit=butilib.BASTOS)])
     
     play_input = butilib.PlayInput(
         history=butilib.History(bazas=[
@@ -610,7 +605,7 @@ def test_model_play_method_checks_returned_card_is_viable_else_raise_an_error ()
     pytest.raises(ValueError, model.play, play_input)
     
     # Test the method fails if you should use triumph and you don't
-    model = MyModel(card=butilib.Card(number=1, suit=butilib.BASTOS))
+    model = TestModel(card_list=[butilib.Card(number=1, suit=butilib.BASTOS)])
     
     play_input = butilib.PlayInput(
         history=butilib.History(bazas=[

@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field, model_validator, field_validator
 from typing import Optional, Tuple, List
 from typing_extensions import Annotated
+
 from .card import Card, CardSet
 from .baza import History
 from .suit import Suit
@@ -214,11 +215,11 @@ class PlayInput (BaseModel) :
                 forced_suit = baza.cards[0].suit
                 
                 if self.butifarra is True :
-                    t1 = baza.cards[0].suit
+                    t1 = forced_suit
                     t2 = None
                 else :
                     t1 = self.triumph
-                    t2 = baza.cards[0].suit
+                    t2 = forced_suit
                     
                 if baza.cards[1].compare(win_c, t1, t2) :
                     win_i = 1
@@ -246,3 +247,4 @@ class PlayOutput (BaseModel) :
     """
     card: Card
     forced: bool = False
+    
