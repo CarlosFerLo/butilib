@@ -7,4 +7,4 @@ from .model import Model
 from .baza import Baza, History
 from .schema import CantarInput, CantarOutput, ContrarInput, ContrarOutput, PlayInput, PlayOutput
 from .descriptions import CardSetDescription, SuitDescription
-from .play_baza import PlayBazaInput
+from .play_baza import PlayBazaInput, play_baza

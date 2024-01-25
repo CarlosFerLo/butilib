@@ -4,9 +4,10 @@ from pydantic import BaseModel, Field, model_validator, field_validator
 from .suit import Suit
 from .contrada import Contrada
 from .card import CardSet
-from .baza import History
+from .baza import History, Baza
 from .model import Model
 from .variants import GameVariant
+from .schema import PlayInput
 
 
 class PlayBazaInput (BaseModel) :
@@ -103,3 +104,21 @@ class PlayBazaInput (BaseModel) :
             return self
         else :
             raise ValueError("There are repeated cards between the card sets and/or history.")
+        
+def play_baza (input: PlayBazaInput) -> Baza :
+    cards = []
+    
+    for i in range(0, 4) :
+        player_number = (input.initial_player + i) % 4
+        
+        play_input = PlayInput(
+            history=input.history, card_set=input.card_sets[player_number],
+            player_number=player_number, butifarra=input.butifarra, triumph=input.triumph,
+            player_c=input.player_c, cards=cards, delegated=input.delegated,
+            game_variant=input.game_variant, contrada=input.contrada
+        )
+        
+        output = input.players[player_number].play(play_input)
+        cards.append(output.card)
+        
+    return Baza(cards=cards, initial_player=input.initial_player)

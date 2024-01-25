@@ -3,6 +3,8 @@ import butilib
 
 import pydantic
 
+from butilib.testing import TestModel
+
 def test_play_baza_input_is_a_pydantic_base_model () :
     assert issubclass(butilib.PlayBazaInput, pydantic.BaseModel)
     
@@ -407,3 +409,29 @@ def test_play_baza_input_raises_an_error_if_there_are_any_repeated_cards_in_any_
         card_sets=[c1,c2,c3,c4], players=[m1, m2, m3, m4], initial_player=0, butifarra=True,
         player_c=3, delegated=False, game_variant=butilib.LIBRE, contrada=butilib.NORMAL
         )
+    
+def test_play_baza_function_expects_a_play_baza_input_and_returns_the_expected_baza () :
+    c1 = butilib.CardSet(cards=[ butilib.Card(number=i, suit=butilib.OROS) for i in range(1, 13) ])
+    c2 = butilib.CardSet(cards=[ butilib.Card(number=i, suit=butilib.BASTOS) for i in range(1, 13) ])
+    c3 = butilib.CardSet(cards=[ butilib.Card(number=i, suit=butilib.COPAS) for i in range(1, 13) ])
+    c4 = butilib.CardSet(cards=[ butilib.Card(number=i, suit=butilib.ESPADAS) for i in range(1, 13) ])
+    
+    m1 = TestModel(card_list=[ butilib.Card(number=1, suit=butilib.OROS) ])
+    m2 = TestModel(card_list=[ butilib.Card(number=1, suit=butilib.BASTOS) ])
+    m3 = TestModel(card_list=[ butilib.Card(number=1, suit=butilib.COPAS) ])
+    m4 = TestModel(card_list=[ butilib.Card(number=1, suit=butilib.ESPADAS) ])
+    
+    play_baza_input = butilib.PlayBazaInput(
+        history=butilib.History(bazas=[]), card_sets=[c1, c2, c3, c4], players=[m1, m2, m3, m4],
+        initial_player=1, butifarra=True, player_c=0, delegated=False, game_variant=butilib.LIBRE,
+        contrada=butilib.NORMAL
+    )
+    
+    output = butilib.play_baza(play_baza_input)
+    
+    assert output == butilib.Baza(initial_player=1, cards=[
+        butilib.Card(number=1, suit=butilib.BASTOS),
+        butilib.Card(number=1, suit=butilib.COPAS),
+        butilib.Card(number=1, suit=butilib.ESPADAS),
+        butilib.Card(number=1, suit=butilib.OROS)
+    ])

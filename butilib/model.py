@@ -151,6 +151,8 @@ class Model (BaseModel) :
                             return PlayOutput(card=w_cards[0], forced=True)
                         elif len(w_cards) > 1 :
                             p_cards = w_cards
+                else :
+                    p_cards = input.card_set.cards
             else :        
                 p_cards = input.card_set.cards
         else :
