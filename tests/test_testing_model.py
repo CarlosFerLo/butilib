@@ -40,9 +40,13 @@ def test_testing_model_accepts_a_card_list_when_instantiated_and_returns_element
     assert model.card_list == card_list
     
     for c in card_list :
-        output = model.play(play_input)
+        output = model._play(play_input)
         assert output.card == c
     
+    for c in card_list :
+        output = model.play(play_input)
+        assert output.card == c
+        
     output = model.play(play_input)
     assert output.card == card_list[0]
     

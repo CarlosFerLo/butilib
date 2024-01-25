@@ -8,7 +8,7 @@ class TestModel (Model) :
     card_list: List[Card]
     _i = 0
     
-    def play(self, input: PlayInput) -> PlayOutput:
+    def _play(self, input: PlayInput) -> PlayOutput:
         card = self.card_list[self._i]
         self._i += 1 
         self._i %= len(self.card_list)
