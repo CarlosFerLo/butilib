@@ -105,7 +105,10 @@ class PlayBazaInput (BaseModel) :
         else :
             raise ValueError("There are repeated cards between the card sets and/or history.")
         
-def play_baza (input: PlayBazaInput) -> Baza :
+class PlayBazaOutput (BaseModel) :
+    baza: Baza
+        
+def play_baza (input: PlayBazaInput) -> PlayBazaOutput :
     cards = []
     
     for i in range(0, 4) :
@@ -121,4 +124,4 @@ def play_baza (input: PlayBazaInput) -> Baza :
         output = input.players[player_number].play(play_input)
         cards.append(output.card)
         
-    return Baza(cards=cards, initial_player=input.initial_player)
+    return PlayBazaOutput(baza=Baza(cards=cards, initial_player=input.initial_player))

@@ -410,7 +410,23 @@ def test_play_baza_input_raises_an_error_if_there_are_any_repeated_cards_in_any_
         player_c=3, delegated=False, game_variant=butilib.LIBRE, contrada=butilib.NORMAL
         )
     
-def test_play_baza_function_expects_a_play_baza_input_and_returns_the_expected_baza () :
+def test_play_baza_output_is_a_pydantic_base_model ():
+    issubclass(butilib.PlayBazaOutput, pydantic.BaseModel)
+    
+def test_play_baza_output_has_expected_attributes () :
+    """PlayBazaOutput:
+        - baza: Baza (full baza)
+    """
+    play_baza_output = butilib.PlayBazaOutput(
+        baza=butilib.Baza(initial_player=0, cards=[
+            butilib.Card(number=i, suit=butilib.OROS) for i in [1, 2, 3, 4]
+        ])
+    )
+
+    assert isinstance(play_baza_output, butilib.PlayBazaOutput)
+    assert play_baza_output.baza == butilib.Baza(initial_player=0, cards=[ butilib.Card(number=i, suit=butilib.OROS) for i in [1, 2, 3, 4] ])
+
+def test_play_baza_function_expects_a_play_baza_input_and_returns_the_expected_play_baza_output () :
     c1 = butilib.CardSet(cards=[ butilib.Card(number=i, suit=butilib.OROS) for i in range(1, 13) ])
     c2 = butilib.CardSet(cards=[ butilib.Card(number=i, suit=butilib.BASTOS) for i in range(1, 13) ])
     c3 = butilib.CardSet(cards=[ butilib.Card(number=i, suit=butilib.COPAS) for i in range(1, 13) ])
@@ -428,8 +444,9 @@ def test_play_baza_function_expects_a_play_baza_input_and_returns_the_expected_b
     )
     
     output = butilib.play_baza(play_baza_input)
-    
-    assert output == butilib.Baza(initial_player=1, cards=[
+   
+    assert isinstance(output, butilib.PlayBazaOutput)
+    assert output.baza == butilib.Baza(initial_player=1, cards=[
         butilib.Card(number=1, suit=butilib.BASTOS),
         butilib.Card(number=1, suit=butilib.COPAS),
         butilib.Card(number=1, suit=butilib.ESPADAS),
