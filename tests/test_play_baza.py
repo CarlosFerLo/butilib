@@ -318,5 +318,92 @@ def test_play_baza_input_raises_error_if_history_is_not_consistent () :
                   contrada=butilib.NORMAL
                   )
     
-def test_play_baza_raises_an_error_if_the_number_of_cards_in_any_card_set_is_inconsistent_with_the_number_of_bazas_in_history () :
-    pass # TODO
+def test_play_baza_input_raises_an_error_if_not_all_the_card_sets_are_of_the_same_length () :
+    deck = butilib.Deck.new()
+    c1, c2, c3, c4 = deck.deal()
+    
+    m1 = butilib.Model()
+    m2 = butilib.Model()
+    m3 = butilib.Model()
+    m4 = butilib.Model()
+    
+    c1.pop()
+    
+    pytest.raises(pydantic.ValidationError, butilib.PlayBazaInput,
+                  history=butilib.History(bazas=[]), card_sets=[c1, c2, c3, c4], players=[m1, m2, m3, m4],
+                  initial_player=0, butifarra=True, player_c=3, delegated=False,
+                  game_variant=butilib.LIBRE, contrada=butilib.NORMAL
+                  )
+    
+def test_play_baza_input_raises_an_error_if_the_number_of_cards_in_a_card_set_is_inconsistent_with_the_number_of_bazas_in_history () :
+    m1 = butilib.Model()
+    m2 = butilib.Model()
+    m3 = butilib.Model()
+    m4 = butilib.Model()
+    
+    deck = butilib.Deck.new()
+    c1, c2, c3, c4 = deck.deal()
+
+    pytest.raises(pydantic.ValidationError, butilib.PlayBazaInput,
+        history=butilib.History(bazas=[butilib.Baza(initial_player=0, cards=[ butilib.Card(number=i, suit=butilib.OROS) for i in [9, 1, 12, 11] ])]),
+        card_sets=[c1,c2,c3,c4], players=[m1, m2, m3, m4], initial_player=0, butifarra=True,
+        player_c=3, delegated=False, game_variant=butilib.LIBRE, contrada=butilib.NORMAL
+        )
+    
+    cards = []
+    
+    cards.append(c1.pop())
+    c1.pop()
+    
+    cards.append(c2.pop())
+    c2.pop()
+    
+    cards.append(c3.pop())
+    c3.pop()
+    
+    cards.append(c4.pop())
+    c4.pop()
+    
+    pytest.raises(pydantic.ValidationError, butilib.PlayBazaInput,
+        history=butilib.History(bazas=[butilib.Baza(initial_player=0, cards=cards)]),
+        card_sets=[c1,c2,c3,c4], players=[m1, m2, m3, m4], initial_player=0, butifarra=True,
+        player_c=3, delegated=False, game_variant=butilib.LIBRE, contrada=butilib.NORMAL
+        )
+    
+def test_play_baza_input_raises_an_error_if_there_are_any_repeated_cards_in_any_card_set_or_history () :
+    # Check for repeated cards in the card sets
+    m1 = butilib.Model()
+    m2 = butilib.Model()
+    m3 = butilib.Model()
+    m4 = butilib.Model()
+    
+    deck = butilib.Deck.new()
+    c1, c2, c3, c4 = deck.deal()
+    
+    card = c1.pop()
+    c2.pop()
+    c1.add(card)
+    c2.add(card)
+    
+    pytest.raises(pydantic.ValidationError, butilib.PlayBazaInput,
+        history=butilib.History(bazas=[]),
+        card_sets=[c1,c2,c3,c4], players=[m1, m2, m3, m4], initial_player=0, butifarra=True,
+        player_c=3, delegated=False, game_variant=butilib.LIBRE, contrada=butilib.NORMAL
+        )
+    
+    # Check for repeated cards including the history 
+    deck = butilib.Deck.new()
+    c1, c2, c3, c4 = deck.deal()
+    
+    cards = [ c1.pop(), c2.pop(), c3.pop(), c4.pop() ]
+    
+    c1.pop()
+    c1.add(cards[0])
+    
+    pytest.raises(pydantic.ValidationError, butilib.PlayBazaInput,
+        history=butilib.History(bazas=[
+            butilib.Baza(initial_player=0, cards=cards)
+            ]),
+        card_sets=[c1,c2,c3,c4], players=[m1, m2, m3, m4], initial_player=0, butifarra=True,
+        player_c=3, delegated=False, game_variant=butilib.LIBRE, contrada=butilib.NORMAL
+        )

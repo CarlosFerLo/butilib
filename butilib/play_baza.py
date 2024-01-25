@@ -1,5 +1,5 @@
 from typing import List, Optional
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, model_validator, field_validator
 
 from .suit import Suit
 from .contrada import Contrada
@@ -32,6 +32,14 @@ class PlayBazaInput (BaseModel) :
     delegated: bool
     game_variant: GameVariant
     contrada: Contrada
+    
+    @field_validator("card_sets")
+    @classmethod
+    def check_all_the_card_sets_are_of_the_same_length (cls, v) :
+        if all(len(v[i]) == len(v[i+1]) for i in range(len(v) - 1)) :
+            return v
+        else :
+            raise ValueError("Not all the card sets are of the same length.")
     
     @model_validator(mode="after")
     def check_not_both_butifarra_and_triumph_attributes_are_Set_to_not_none_or_false_values (self) :
@@ -78,4 +86,20 @@ class PlayBazaInput (BaseModel) :
         
         return self
     
-    
+    @model_validator(mode="after")
+    def check_the_number_of_bazas_in_history_is_consisten_with_the_number_of_cards_on_card_sets (self) :
+        if all( 12 - len(c) == len(self.history) for c in self.card_sets ) :
+            return self
+        else :
+            raise ValueError("The number of bazas in the history attribute is inconsistent with the number of cards in a card set.")
+        
+    @model_validator(mode="after")
+    def check_that_there_are_no_repeated_cards (self) :
+        card_list = []
+        for c in self.card_sets: card_list.extend(c.cards)
+        for b in self.history: card_list.extend(b.cards)
+        
+        if len(card_list) == len(set(card_list)) :
+            return self
+        else :
+            raise ValueError("There are repeated cards between the card sets and/or history.")
