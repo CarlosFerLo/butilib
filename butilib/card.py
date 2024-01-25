@@ -205,3 +205,7 @@ class CardSet (BaseModel) :
             
         return cards
     
+    def pop (self) -> Card :
+        card = self.cards.pop()
+        
+        return card

@@ -178,3 +178,10 @@ def test_card_set_get_method_accepts_optional_number_and_suit_parameters_and_ret
 def test_card_set_get_method_raises_an_error_if_no_parameter_is_passed () :
     card_set = butilib.CardSet(cards=[])
     pytest.raises(ValueError, card_set.get)
+
+def test_card_set_pop_method_removes_one_random_card_from_the_set () :
+    card_set = butilib.CardSet(cards=[butilib.Card(number=1, suit=butilib.OROS)])
+    card = card_set.pop()
+    
+    assert card == butilib.Card(number=1, suit=butilib.OROS)
+    assert card_set == butilib.CardSet(cards=[])
