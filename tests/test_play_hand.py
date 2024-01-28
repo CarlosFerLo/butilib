@@ -158,3 +158,6 @@ def test_play_hand_input_there_are_no_repeated_cards_on_all_the_card_sets ():
     
 def test_play_hand_output_is_a_pydantic_base_model () :
     assert issubclass(butilib.PlayHandOutput, pydantic.BaseModel)
+    
+def test_play_hand_output_has_all_expected_attributes () : # TODO
+    pass 
