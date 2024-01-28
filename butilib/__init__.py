@@ -8,4 +8,4 @@ from .baza import Baza, History
 from .schema import CantarInput, CantarOutput, ContrarInput, ContrarOutput, PlayInput, PlayOutput
 from .descriptions import CardSetDescription, SuitDescription
 from .play_baza import PlayBazaInput, PlayBazaOutput, play_baza
-from .play_hand import PlayHandInput
+from .play_hand import PlayHandInput, PlayHandOutput
