@@ -1,7 +1,7 @@
 from typing import List
 
-from butilib.model import Model
 from butilib.card import Card
+from butilib.model import Model
 from butilib.schema import PlayInput, PlayOutput
 
 

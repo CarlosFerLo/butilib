@@ -1,6 +1,8 @@
-import butilib
-import pytest
 from enum import Enum
+
+import pytest
+
+import butilib
 
 
 def test_butilib_has_suit_enum_str_with_values_oros_copas_espadas_bastos():

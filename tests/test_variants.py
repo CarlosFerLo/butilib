@@ -1,7 +1,8 @@
-import butilib
+from enum import Enum
+
 import pytest
 
-from enum import Enum
+import butilib
 
 
 def test_butilib_game_type_enum_str_has_libre_and_obligada_values():

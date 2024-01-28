@@ -1,7 +1,7 @@
-from pydantic import BaseModel
 from typing import List
 
-from .variants import GameVariant, LIBRE, OBLIGADA
+from pydantic import BaseModel
+
 from .schema import (
     CantarInput,
     CantarOutput,
@@ -10,6 +10,7 @@ from .schema import (
     PlayInput,
     PlayOutput,
 )
+from .variants import LIBRE, OBLIGADA, GameVariant
 
 
 class Model(BaseModel):

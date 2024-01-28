@@ -1,7 +1,8 @@
-import pytest
-import butilib
-
 from enum import Enum
+
+import pytest
+
+import butilib
 
 
 def test_contrada_is_a_subclass_of_enum_and_has_correct_values():

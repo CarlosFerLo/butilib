@@ -1,6 +1,7 @@
-import pytest
-import pydantic
 from typing import List
+
+import pydantic
+import pytest
 
 import butilib
 from butilib.schema import PlayInput, PlayOutput

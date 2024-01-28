@@ -1,9 +1,10 @@
 from typing import List, Tuple
-from typing_extensions import Annotated
-from pydantic import BaseModel, Field, field_validator
 
-from butilib.model import Model
+from pydantic import BaseModel, Field, field_validator
+from typing_extensions import Annotated
+
 from butilib.card import CardSet
+from butilib.model import Model
 
 
 class PlayHandInput(BaseModel):

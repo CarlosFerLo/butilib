@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from .suit import OROS, BASTOS, COPAS, ESPADAS, Suit
+from .suit import BASTOS, COPAS, ESPADAS, OROS, Suit
 
 
 class SuitDescription(BaseModel):

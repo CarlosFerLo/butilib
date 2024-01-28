@@ -1,8 +1,7 @@
-import pytest
-import butilib
-
 import pydantic
+import pytest
 
+import butilib
 from butilib.testing import TestModel
 
 

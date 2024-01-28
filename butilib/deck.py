@@ -1,6 +1,7 @@
-from pydantic import BaseModel, field_validator
-from typing import List, Tuple
 from random import shuffle
+from typing import List, Tuple
+
+from pydantic import BaseModel, field_validator
 
 from .card import Card, CardSet
 from .suit import Suit

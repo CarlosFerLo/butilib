@@ -1,8 +1,9 @@
-from pydantic import BaseModel, Field, field_validator
 from typing import List, Optional
 
-from .suit import Suit, OROS, BASTOS, COPAS, ESPADAS
+from pydantic import BaseModel, Field, field_validator
+
 from .descriptions import CardSetDescription, SuitDescription
+from .suit import BASTOS, COPAS, ESPADAS, OROS, Suit
 
 
 class Card(BaseModel):

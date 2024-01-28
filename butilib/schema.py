@@ -1,11 +1,12 @@
-from pydantic import BaseModel, Field, model_validator, field_validator
-from typing import Optional, Tuple, List
+from typing import List, Optional, Tuple
+
+from pydantic import BaseModel, Field, field_validator, model_validator
 from typing_extensions import Annotated
 
-from .card import Card, CardSet
 from .baza import History
+from .card import Card, CardSet
+from .contrada import CONTRADA, NORMAL, RECONTRADA, SANT_VICENTADA, Contrada
 from .suit import Suit
-from .contrada import Contrada, NORMAL, CONTRADA, RECONTRADA, SANT_VICENTADA
 from .variants import GameVariant
 
 

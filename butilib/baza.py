@@ -1,5 +1,6 @@
-from pydantic import BaseModel, field_validator, Field
 from typing import List
+
+from pydantic import BaseModel, Field, field_validator
 
 from .card import Card
 
