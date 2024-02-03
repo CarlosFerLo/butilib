@@ -15,6 +15,9 @@ class Contrada(Enum):
     RECONTRADA = 2
     SANT_VICENTADA = 3
 
+    def __ge__(self, other: "Contrada") -> bool:
+        return self.value >= other.value
+
 
 NORMAL = Contrada.NORMAL
 CONTRADA = Contrada.CONTRADA

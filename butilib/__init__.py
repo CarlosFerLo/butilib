@@ -5,7 +5,7 @@ from .deck import Deck
 from .descriptions import CardSetDescription, SuitDescription
 from .model import Model
 from .play_baza import PlayBazaInput, PlayBazaOutput, play_baza
-from .play_hand import PlayHandInput, PlayHandOutput
+from .play_hand import PlayHandInput, PlayHandOutput, play_hand
 from .schema import (
     CantarInput,
     CantarOutput,

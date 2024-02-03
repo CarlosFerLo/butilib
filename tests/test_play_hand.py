@@ -2,6 +2,7 @@ import pydantic
 import pytest
 
 import butilib
+from butilib.testing import TestModel
 
 
 def test_play_hand_input_is_a_pydantic_base_model():
@@ -220,5 +221,85 @@ def test_play_hand_output_is_a_pydantic_base_model():
     assert issubclass(butilib.PlayHandOutput, pydantic.BaseModel)
 
 
-def test_play_hand_output_has_all_expected_attributes():  # TODO
-    pass
+def test_play_hand_output_has_all_expected_attributes():
+    """PlayHandOutput:
+    - history: History (full)
+    """
+    history = butilib.History(bazas=[])
+    for s in butilib.Suit:
+        for l in [[9, 1, 12, 11], [10, 8, 7, 6], [5, 4, 3, 2]]:
+            history.add(
+                butilib.Baza(
+                    initial_player=0, cards=[butilib.Card(suit=s, number=n) for n in l]
+                )
+            )
+
+    play_hand_output = butilib.PlayHandOutput(history=history)
+
+    assert isinstance(play_hand_output, butilib.PlayHandOutput)
+    assert play_hand_output.history == history
+
+
+def test_play_hand_output_accepts_only_full_history():
+    history = butilib.History(bazas=[])
+
+    pytest.raises(pydantic.ValidationError, butilib.PlayHandOutput, history=history)
+
+    # Add 11 more bazas iteratively and check that the history is not accepted
+    for s in butilib.Suit:
+        for l in [[9, 1, 12, 11], [10, 8, 7, 6], [5, 4, 3, 2]]:
+            history.add(
+                butilib.Baza(
+                    initial_player=0, cards=[butilib.Card(suit=s, number=n) for n in l]
+                )
+            )
+            if len(history) < 12:
+                pytest.raises(
+                    pydantic.ValidationError, butilib.PlayHandOutput, history=history
+                )
+
+
+def test_play_hand_function_expects_play_hand_input_calls_expected_butilib_functions_and_gets_the_expected_play_hand_output():
+    c1 = butilib.CardSet(
+        cards=[butilib.Card(number=i, suit=butilib.OROS) for i in range(1, 13)]
+    )
+    c2 = butilib.CardSet(
+        cards=[butilib.Card(number=i, suit=butilib.BASTOS) for i in range(1, 13)]
+    )
+    c3 = butilib.CardSet(
+        cards=[butilib.Card(number=i, suit=butilib.COPAS) for i in range(1, 13)]
+    )
+    c4 = butilib.CardSet(
+        cards=[butilib.Card(number=i, suit=butilib.ESPADAS) for i in range(1, 13)]
+    )
+
+    m1 = TestModel(card_list=c1.cards, triumph=butilib.OROS)
+    m2 = TestModel(card_list=c2.cards)
+    m3 = TestModel(card_list=c3.cards)
+    m4 = TestModel(card_list=c4.cards)
+
+    play_hand_input = butilib.PlayHandInput(
+        players=[m1, m2, m3, m4], card_sets=[c1, c2, c3, c4], score=(1, 10), player_c=0
+    )
+
+    output = butilib.play_hand(play_hand_input)
+
+    expected_history = butilib.History(bazas=[])
+
+    for i in range(1, 13):
+        expected_history.add(
+            butilib.Baza(
+                initial_player=0,
+                cards=[
+                    butilib.Card(number=i, suit=s)
+                    for s in [
+                        butilib.OROS,
+                        butilib.BASTOS,
+                        butilib.COPAS,
+                        butilib.ESPADAS,
+                    ]
+                ],
+            )
+        )
+
+    assert output.history == expected_history
